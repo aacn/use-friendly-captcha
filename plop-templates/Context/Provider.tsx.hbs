@@ -1,0 +1,24 @@
+import React, { createContext, ReactNode } from "react";
+
+export interface I{{pascalCase name}}Context {
+
+}
+
+interface I{{pascalCase name}}ProviderProps {
+  children: ReactNode;
+}
+
+export const {{pascalCase name}}Provider = ({ children }: I{{pascalCase name}}ProviderProps) => {
+
+  return (
+    <{{pascalCase name}}Context.Provider
+      value={
+
+      }
+    >
+      {children}
+    </{{pascalCase name}}Context.Provider>
+  );
+}
+
+export const {{pascalCase name}}Context = createContext<I{{pascalCase name}}Context>(null!);

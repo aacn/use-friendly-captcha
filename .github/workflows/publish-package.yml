@@ -1,0 +1,136 @@
+name: Create Release and Publish
+
+# Trigger the create release workflow
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build & Upload Artifact
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: yarn install and build
+      run: |
+         yarn install --frozen-lockfile
+         yarn build
+
+    - uses: actions/upload-artifact@main
+      with:
+        name: artifact-built-by-yarn
+        path: dist/
+
+  test:
+    needs: build
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node-version: [14.x, 16.x]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@main
+        with:
+          name: artifact-built-by-yarn
+          path: dist/
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: yarn install, and test
+        run: |
+          yarn install --frozen-lockfile
+          yarn test
+        env:
+          CI: true
+
+  release:
+    needs: test
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@main
+        with:
+          name: artifact-built-by-yarn
+          path: dist/
+
+      - uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    needs: release
+    name: Publish to GitHub Packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@main
+        with:
+          name: artifact-built-by-yarn
+          path: dist/
+
+      # Setup .npmrc file to publish to GitHub Packages
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com'
+          # Defaults to the user or organization that owns the workflow file
+          scope: '@{{github.event.repository.owner.login}}'
+
+      - uses: actions-ecosystem/action-regex-match@v2
+        id: regex-match
+        with:
+          text: ${{ github.event.ref }}
+          regex: '(\.?\d)+'
+
+      - run: echo 'Using ${{steps.regex-match.outputs.match}}'
+      - run: cat package.json
+
+      - name: Update package.json version
+        uses: jossef/action-set-json-field@v1
+        with:
+          file: package.json
+          field: version
+          value: ${{ steps.regex-match.outputs.match }}
+
+      - name: Update package.json name
+        uses: jossef/action-set-json-field@v1
+        with:
+          file: package.json
+          field: name
+          value: '@${{ github.event.repository.full_name }}'
+
+      - name: Update package.json git repo url
+        uses: jossef/action-set-json-field@v1
+        with:
+          file: package.json
+          field: repository.url
+          value: 'ssh://git@github.com/${{ github.event.repository.full_name }}.git'
+
+      - name: Update package.json private=false
+        uses: jossef/action-set-json-field@v1
+        with:
+          file: package.json
+          field: private
+          value: false
+          parse_json: true
+
+      - run: echo 'Compare to:'
+      - run: cat package.json
+
+      - run: yarn install --frozen-lockfile
+      - run: yarn publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

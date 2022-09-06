@@ -1,0 +1,20 @@
+name: Lint Pull Request
+on:
+  pull_request:
+    types: [opened, edited]
+
+jobs:
+  lint-pull-request:
+    name: Lint Pull Request
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Lint Pull Request
+        uses: reaction-link/actions-lint-pull-request@v1
+        with:
+          config-bot-repotoken: ${{secrets.OUR_BOT_REPO_SCOPED_TOKEN}}
+          config-bot-login: reactionlinkbot
+          github-event: ${{toJson(github.event)}}
+          use-title-regex: '(Feature|Bugfix|Hotfix|Release)(\/REA-\d+)?:\s\w+'
+          use-approval-labels: '["Good Structure"]'
+          use-explanation-title: '["- There must be a title in this format: `Feature|Bugfix|Hotfix|Release: Title`","- If applicable, add your issue ticket (e.g. `REA-100`) with a slash in the title","- Use `Feature` for enhancements or new functionality","- Use `Bugfix` only if you fixed a known bug","- Use `Hotfix` for problems introduced by previous merges","- Use proper capitalization in your title"]'
