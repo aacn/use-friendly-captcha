@@ -7,12 +7,9 @@ import {
 import { swc } from 'rollup-plugin-swc3';
 import del from 'rollup-plugin-delete';
 import json from '@rollup/plugin-json';
-import postcss from 'rollup-plugin-postcss';
 import prettier from 'rollup-plugin-prettier';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescriptPaths from "rollup-plugin-typescript-paths";
-import path from "path"
-import autoprefixer from 'autoprefixer';
 
 export default [
   {
@@ -29,28 +26,10 @@ export default [
       // Outputs the packaged lib in ES Module format
       { file: modulePath, format: 'esm' },
     ],
-    external: [...Object.keys(peerDependencies || {}), 'components/styles/global.css'],
+    external: Object.keys(peerDependencies || {}),
     plugins: [
       del({ targets: ['dist/*', 'playground/src/component-lib/*'] }),
-      nodeResolve({
-        extensions: [".css"],
-      }),
-      postcss({
-        plugins: [autoprefixer],
-        config: {
-          path: "./postcss.config.js",
-        },
-        include: "src/components/styles/global.css",
-        modules: true,
-        extensions: [".css"],
-        extract: path.resolve('playground/src/component-lib/styles/global.css'),
-        sourceMap: true,
-        minimize: true,
-        autoModules: false,
-        inject: {
-          insertAt: "top",
-        },
-      }),
+      nodeResolve(),
       typescriptPaths({
         preserveExtensions: true,
       }),

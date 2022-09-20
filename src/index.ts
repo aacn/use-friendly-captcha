@@ -1,3 +1,3 @@
-import { FirstComponent } from '@/components/first-component';
+import { Example } from '@/components/Example';
 
-export { FirstComponent };
+export { Example };

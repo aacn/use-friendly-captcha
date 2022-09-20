@@ -1,9 +1,9 @@
-import { FirstComponent } from './component-lib';
+import { Example } from './component-lib';
 
 function App() {
   return (
     <div className="App">
-      <FirstComponent />
+      <Example />
     </div>
   );
 }
