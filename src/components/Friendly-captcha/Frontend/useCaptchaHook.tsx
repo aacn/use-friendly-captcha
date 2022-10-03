@@ -5,9 +5,14 @@ import {
   WidgetInstance,
 } from 'friendly-challenge';
 
+enum FC_PUZZLE_EP {
+  GLOBAL1 = 'https://api.friendlycaptcha.com/api/v1/puzzle',
+  EU1 = 'https://api.friendlycaptcha.eu/api/v1/puzzle',
+}
+
 type FriendlyCaptchaProps = {
   siteKey: string;
-  endpoint?: string;
+  endpoint?: FC_PUZZLE_EP;
   language?: keyof typeof localizations | Localization;
   startMode?: 'auto' | 'focus' | 'none';
 };
@@ -22,7 +27,7 @@ type FriendlyCaptchaProps = {
  */
 function useCaptchaHook({
   siteKey,
-  endpoint = 'https://api.friendlycaptcha.com/api/v1/puzzle',
+  endpoint = FC_PUZZLE_EP.GLOBAL1,
   language = 'de',
   startMode = 'auto',
 }: FriendlyCaptchaProps) {

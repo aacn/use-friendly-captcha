@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+enum FC_VERIFICATION_EP {
+  GLOBAL1 = 'https://api.friendlycaptcha.com/api/v1/siteverify',
+  EU1 = 'https://eu-api.friendlycaptcha.eu/api/v1/siteverify',
+}
+
 type FCVerificationProps = {
-  endpoint?: string;
+  endpoint?: FC_VERIFICATION_EP;
   solution: string;
   secret: string;
   sitekey?: string;
@@ -19,7 +24,7 @@ type CaptchaResponseProps = {
  * @returns boolean depending on if the request yields a success or an error
  */
 async function FCVerification({
-  endpoint = 'https://api.friendlycaptcha.com/api/v1/siteverify',
+  endpoint = FC_VERIFICATION_EP.GLOBAL1,
   ...props
 }: FCVerificationProps): Promise<boolean> {
   try {

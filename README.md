@@ -15,7 +15,7 @@ and state from the hook, for you to manage.
 The hook requires the following properties:<br/>
 ```
 siteKey: string;
-endpoint?: string;
+endpoint?: FC_PUZZLE_EP; enum for the currently available endpoints (EU & global)
 language?: keyof typeof localizations | Localization;
 startMode?: "auto" | "focus" | "none";
 ```
@@ -27,8 +27,8 @@ to handle the actual request further.
 
 The function requires the following properties:
 ```
-endpoint?: string;
-solution: string,
-secret: string,
+endpoint?: FC_VERIFICATION_EP; enum for the currently available endpoints (EU & global)
+solution: string;
+secret: string;
 sitekey?: string;
 ```
