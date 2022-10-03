@@ -1,12 +1,15 @@
-import React, { FC } from 'react';
-import FriendlyCaptcha from '@/components/Friendly-captcha';
-import useManageCaptchaHook from '@/components/Friendly-captcha/manageCaptchaHook';
-import submitFormToServer from '@/components/Friendly-captcha/api/submitFormToServer';
+import React, { FC, useState } from 'react';
+import useCaptchaHook from '@/components/Friendly-captcha/Frontend/useCaptchaHook';
+import submitFormToServer from '@/Example/api/submitFormToServer';
 
 export const Example: FC = () => {
-  const captchaManager = useManageCaptchaHook('FCMP19T51HTMI9AS');
+  const siteKey = 'FCMP19T51HTMI9AS';
+  const captchaManager = useCaptchaHook({ siteKey });
+  const [submitStatus, setSubmitStatus] = useState<boolean | null>(null);
 
-  function formExampleSubmitHandler(event: React.FormEvent<HTMLFormElement>) {
+  async function formExampleSubmitHandler(
+    event: React.FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault();
     const ex_1 = document.querySelector('#form_1 #input_example_1')?.nodeValue;
     const ex_2 = document.querySelector('#form_1 #input_example_2')?.nodeValue;
@@ -15,13 +18,18 @@ export const Example: FC = () => {
       ex_1: ex_1 !== undefined ? ex_1 : null,
       ex_2: ex_2 !== undefined ? ex_2 : null,
     };
+
     if (
       captchaManager.captchaStatus.solution !== null &&
       captchaManager.captchaStatus.error === null
     ) {
       const solution: string = captchaManager.captchaStatus.solution;
-      const sitekey = captchaManager.sitekey;
-      submitFormToServer({ captcha: { solution, sitekey }, content });
+      // Your submit handler here
+      const response = await submitFormToServer({
+        captcha: { solution, siteKey },
+        content,
+      });
+      setSubmitStatus(response);
     }
   }
 
@@ -40,12 +48,7 @@ export const Example: FC = () => {
           </label>
           <input id="input_example_2" type="text" />
         </div>
-        <FriendlyCaptcha
-          siteKey={captchaManager.sitekey}
-          endpoint={captchaManager.endpoint}
-          doneCallback={captchaManager.solvedHandler}
-          errorCallback={captchaManager.errorHandler}
-        />
+        <captchaManager.CaptchaWidget className="bg-cyan-800" />
         {captchaManager.captchaStatus.solution !== null && (
           <React.Fragment>
             <p className="text-xl text-black absolute top-10">solved!</p>
@@ -55,6 +58,12 @@ export const Example: FC = () => {
         {captchaManager.captchaStatus.error !== null && (
           <p className="text-xl text-red-500 absolute top-10">error!</p>
         )}
+        {submitStatus !== null &&
+          (submitStatus ? (
+            <p>Successfully submitted!</p>
+          ) : (
+            <p>Couldn't submit form, please try again.</p>
+          ))}
       </form>
     </div>
   );

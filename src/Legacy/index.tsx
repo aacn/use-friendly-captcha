@@ -1,3 +1,4 @@
+/*
 import React, { useEffect, useRef, memo } from 'react';
 import { WidgetInstance } from 'friendly-challenge';
 
@@ -43,3 +44,6 @@ const FriendlyCaptcha: React.FC<
 };
 
 export default memo(FriendlyCaptcha);
+
+
+ */
