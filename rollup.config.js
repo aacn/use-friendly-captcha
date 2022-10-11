@@ -7,11 +7,13 @@ import {
 import { swc } from 'rollup-plugin-swc3';
 import del from 'rollup-plugin-delete';
 import json from '@rollup/plugin-json';
+import commonjs from '@rollup/plugin-commonjs';
+import dts from "rollup-plugin-dts";
 import prettier from 'rollup-plugin-prettier';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescriptPaths from "rollup-plugin-typescript-paths";
 
-export default [
+const config = [
   {
     input: 'src/index.ts',
     output: [
@@ -28,30 +30,38 @@ export default [
     ],
     external: Object.keys(peerDependencies || {}),
     plugins: [
-      del({ targets: ['dist/*', 'playground/src/component-lib/*'] }),
-      nodeResolve(),
-      typescriptPaths({
-        preserveExtensions: true,
-      }),
-      json(),
-      // Transpile with swc
-      swc({
-        jsc: {
-          baseUrl: "./src",
-          paths: { "@/*": ["*"] },
-          parser: {
-            syntax: "typescript",
-            tsx: true
+        del({ targets: ['dist/*', 'playground/src/component-lib/*'] }),
+        nodeResolve(),
+        typescriptPaths({
+          preserveExtensions: true,
+        }),
+        json(),
+        commonjs(),
+        // Transpile with swc
+        swc({
+          jsc: {
+            baseUrl: "./src",
+            paths: { "@/*": ["*"] },
+            parser: {
+              syntax: "typescript",
+              tsx: true
+            },
+            target: "es5",
+            loose: false,
+            minify: {
+              compress: false,
+              mangle: false
+            }
           },
-          target: "es5",
-          loose: false,
-          minify: {
-            compress: false,
-            mangle: false
-          }
-        },
-      }),
-      prettier(),
+        }),
+        prettier(),
     ],
   },
+    {
+        input: "src/components/Friendly-captcha/types/index.d.ts",
+        output: [{ file: "dist/index.d.ts", format: "es" }],
+        plugins: [dts()],
+    },
 ];
+
+export default config;

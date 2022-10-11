@@ -1,21 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  Localization,
-  localizations,
-  WidgetInstance,
-} from 'friendly-challenge';
+  FriendlyCaptchaProps,
+  FriendCaptchaEndpoint,
+} from '@/components/Friendly-captcha/types';
+import { WidgetInstance } from 'friendly-challenge';
 
-enum FC_PUZZLE_EP {
-  GLOBAL1 = 'https://api.friendlycaptcha.com/api/v1/puzzle',
-  EU1 = 'https://api.friendlycaptcha.eu/api/v1/puzzle',
+function FC_PUZZLE_EP(endpoint: FriendCaptchaEndpoint): string {
+  switch (endpoint) {
+    case 'GLOBAL1':
+      return 'https://api.friendlycaptcha.com/api/v1/puzzle';
+    case 'EU1':
+      return 'https://api.friendlycaptcha.eu/api/v1/puzzle';
+  }
 }
-
-type FriendlyCaptchaProps = {
-  siteKey: string;
-  endpoint?: FC_PUZZLE_EP;
-  language?: keyof typeof localizations | Localization;
-  startMode?: 'auto' | 'focus' | 'none';
-};
 
 /**
  * React hook that manages the widget and the states for the friendly captcha
@@ -27,7 +24,7 @@ type FriendlyCaptchaProps = {
  */
 function useCaptchaHook({
   siteKey,
-  endpoint = FC_PUZZLE_EP.GLOBAL1,
+  endpoint = 'GLOBAL1',
   language = 'de',
   startMode = 'auto',
 }: FriendlyCaptchaProps) {
@@ -54,7 +51,7 @@ function useCaptchaHook({
       useEffect(() => {
         if (!widget.current && container.current) {
           widget.current = new WidgetInstance(container.current, {
-            puzzleEndpoint: endpoint,
+            puzzleEndpoint: FC_PUZZLE_EP(endpoint),
             startMode: startMode,
             doneCallback: solvedHandler,
             errorCallback: errorHandler,
@@ -85,4 +82,4 @@ function useCaptchaHook({
   return { CaptchaWidget, captchaStatus };
 }
 
-export default useCaptchaHook;
+export { useCaptchaHook };

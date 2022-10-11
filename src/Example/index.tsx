@@ -4,7 +4,7 @@ import submitFormToServer from '@/Example/api/submitFormToServer';
 
 export const Example: FC = () => {
   const siteKey = 'FCMP19T51HTMI9AS';
-  const captchaManager = useCaptchaHook({ siteKey });
+  const captchaManager = useCaptchaHook({ siteKey: siteKey });
   const [submitStatus, setSubmitStatus] = useState<boolean | null>(null);
 
   async function formExampleSubmitHandler(
@@ -26,7 +26,7 @@ export const Example: FC = () => {
       const solution: string = captchaManager.captchaStatus.solution;
       // Your submit handler here
       const response = await submitFormToServer({
-        captcha: { solution, siteKey },
+        captcha: { solution: solution, siteKey: siteKey },
         content,
       });
       setSubmitStatus(response);

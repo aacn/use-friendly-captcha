@@ -1,21 +1,18 @@
 import axios from 'axios';
+import {
+  FCVerificationProps,
+  CaptchaResponseProps,
+  FCVerificationEndpoint,
+} from '@/components/Friendly-captcha/types';
 
-enum FC_VERIFICATION_EP {
-  GLOBAL1 = 'https://api.friendlycaptcha.com/api/v1/siteverify',
-  EU1 = 'https://eu-api.friendlycaptcha.eu/api/v1/siteverify',
+function FC_VERIFICATION_EP(endpoint: FCVerificationEndpoint): string {
+  switch (endpoint) {
+    case 'GLOBAL1':
+      return 'https://api.friendlycaptcha.com/api/v1/siteverify';
+    case 'EU1':
+      return 'https://eu-api.friendlycaptcha.eu/api/v1/siteverify';
+  }
 }
-
-type FCVerificationProps = {
-  endpoint?: FC_VERIFICATION_EP;
-  solution: string;
-  secret: string;
-  sitekey?: string;
-};
-
-type CaptchaResponseProps = {
-  success: boolean;
-  errors: any;
-};
 
 /**
  * Backend verification function that uses the FC verification API to check if the form from the submitted puzzle is valid
@@ -24,12 +21,12 @@ type CaptchaResponseProps = {
  * @returns boolean depending on if the request yields a success or an error
  */
 async function FCVerification({
-  endpoint = FC_VERIFICATION_EP.GLOBAL1,
+  endpoint = 'GLOBAL1',
   ...props
 }: FCVerificationProps): Promise<boolean> {
   try {
     const { data } = await axios.post<CaptchaResponseProps>(
-      endpoint,
+      FC_VERIFICATION_EP(endpoint),
       {
         solution: props.solution,
         secret: props.secret,
@@ -46,7 +43,7 @@ async function FCVerification({
     if (!data.success) {
       // recommended best practice, still return true if status doesn't match 200
       console.log(data.errors.toString());
-      return data.errors.status !== 200;
+      return data.errors.status != '200';
     } else {
       return true;
     }
@@ -60,4 +57,4 @@ async function FCVerification({
   }
 }
 
-export default FCVerification;
+export { FCVerification };
