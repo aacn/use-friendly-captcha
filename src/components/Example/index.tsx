@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
-import useCaptchaHook from '@/components/Friendly-captcha/Frontend/useCaptchaHook';
-import submitFormToServer from '@/Example/api/submitFormToServer';
+import { useCaptchaHook } from '@/components/Friendly-captcha/Frontend/useCaptchaHook';
+import submitFormToServer from '@/components/Example/api/submitFormToServer';
 
 export const Example: FC = () => {
   const siteKey = 'FCMP19T51HTMI9AS';

@@ -17,6 +17,8 @@ type ExampleForm = {
 async function submitFormToServer(
   data: FormDataProps<ExampleForm>
 ): Promise<boolean> {
+  console.log(data);
+  return Promise.resolve(true);
   // Your handler here
 }
 

@@ -27,7 +27,10 @@ function useCaptchaHook({
   endpoint = 'GLOBAL1',
   language = 'de',
   startMode = 'auto',
-}: FriendlyCaptchaProps) {
+}: FriendlyCaptchaProps): {
+  CaptchaWidget: React.FC<React.HTMLAttributes<HTMLDivElement>>;
+  captchaStatus: { solution: string | null; error: any | null };
+} {
   const [captchaStatus, setCaptchaStatus] = useState<{
     solution: string | null;
     error: any | null;

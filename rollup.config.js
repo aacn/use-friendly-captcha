@@ -8,7 +8,7 @@ import { swc } from 'rollup-plugin-swc3';
 import del from 'rollup-plugin-delete';
 import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
-import dts from "rollup-plugin-dts";
+import flatDts from 'rollup-plugin-flat-dts';
 import prettier from 'rollup-plugin-prettier';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescriptPaths from "rollup-plugin-typescript-paths";
@@ -16,18 +16,6 @@ import typescriptPaths from "rollup-plugin-typescript-paths";
 const config = [
   {
     input: 'src/index.ts',
-    output: [
-      // Outputs the packaged lib in the preview workspace 'playground'
-      {
-        file: 'playground/src/component-lib/index.js',
-        format: 'esm',
-        banner: '/* eslint-disable */',
-      },
-      // Outputs the packaged lib in CommonJS format
-      { file: mainPath, format: 'cjs' },
-      // Outputs the packaged lib in ES Module format
-      { file: modulePath, format: 'esm' },
-    ],
     external: Object.keys(peerDependencies || {}),
     plugins: [
         del({ targets: ['dist/*', 'playground/src/component-lib/*'] }),
@@ -56,12 +44,20 @@ const config = [
         }),
         prettier(),
     ],
+      output: [
+          // Outputs the packaged lib in the preview workspace 'playground'
+          {
+              file: 'playground/src/component-lib/index.js',
+              format: 'esm',
+              banner: '/* eslint-disable */',
+              plugins: [flatDts()]
+          },
+          // Outputs the packaged lib in CommonJS format
+          { file: mainPath, format: 'cjs', plugins: [flatDts()] },
+          // Outputs the packaged lib in ES Module format
+          { file: modulePath, format: 'esm', plugins: [flatDts()] },
+      ]
   },
-    {
-        input: "src/components/Friendly-captcha/types/index.d.ts",
-        output: [{ file: "dist/index.d.ts", format: "es" }],
-        plugins: [dts()],
-    },
 ];
 
 export default config;
