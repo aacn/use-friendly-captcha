@@ -12,6 +12,7 @@ type FriendlyCaptchaProps = {
   endpoint?: FriendCaptchaEndpoint;
   language?: keyof typeof localizations | Localization;
   startMode?: 'auto' | 'focus' | 'none';
+  showAttribution: boolean;
 };
 
 type FriendlyCaptchaWidgetProps = Required<FriendlyCaptchaProps> &
@@ -58,11 +59,14 @@ const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
   }, []);
 
   return (
-    <div
-      ref={container}
-      className={props.className}
-      data-sitekey={props.siteKey}
-    />
+    <>
+      <style>{!props.showAttribution && '.frc-banner { display: none }'}</style>
+      <div
+        ref={container}
+        className={props.className}
+        data-sitekey={props.siteKey}
+      />
+    </>
   );
 };
 
@@ -81,6 +85,7 @@ function useCaptchaHook({
   endpoint = 'GLOBAL1',
   language = 'de',
   startMode = 'auto',
+  showAttribution = true,
 }: FriendlyCaptchaProps): {
   CaptchaWidget: (props: React.HTMLAttributes<HTMLDivElement>) => ReactElement;
   captchaStatus: CaptchaStatus;
@@ -106,6 +111,7 @@ function useCaptchaHook({
           endpoint={endpoint}
           language={language}
           startMode={startMode}
+          showAttribution={showAttribution}
           solvedHandler={solvedHandler}
           errorHandler={errorHandler}
           {...widgetProps}

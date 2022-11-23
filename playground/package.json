@@ -19,6 +19,7 @@
     "@types/react-dom": "^17.0.9",
     "autoprefixer": "^10.4.10",
     "babel-jest": "^29.3.1",
+    "cypress": "^11.2.0",
     "friendly-challenge": "^0.9.5",
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",
@@ -31,7 +32,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test __tests__/frontend.test.ts --watchAll",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "cypress:open": "cypress open"
   },
   "eslintConfig": {
     "extends": [
