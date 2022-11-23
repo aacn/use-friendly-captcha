@@ -1,9 +1,18 @@
 import axios from 'axios';
-import {
-  FCVerificationProps,
-  CaptchaResponseProps,
-  FCVerificationEndpoint,
-} from '@/components/Friendly-captcha/types';
+
+type FCVerificationEndpoint = 'GLOBAL1' | 'EU1';
+
+type FCVerificationProps = {
+  endpoint?: FCVerificationEndpoint;
+  solution: string;
+  secret: string;
+  sitekey?: string;
+};
+
+type CaptchaResponseProps = {
+  success: boolean;
+  errors: any;
+};
 
 function FC_VERIFICATION_EP(endpoint: FCVerificationEndpoint): string {
   switch (endpoint) {
@@ -24,37 +33,39 @@ async function FCVerification({
   endpoint = 'GLOBAL1',
   ...props
 }: FCVerificationProps): Promise<boolean> {
-  try {
-    const { data } = await axios.post<CaptchaResponseProps>(
-      FC_VERIFICATION_EP(endpoint),
-      {
-        solution: props.solution,
-        secret: props.secret,
-        siteKey: props.sitekey,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+  return new Promise<boolean>(async (res) => {
+    try {
+      const { data } = await axios.post<CaptchaResponseProps>(
+        FC_VERIFICATION_EP(endpoint),
+        {
+          solution: props.solution,
+          secret: props.secret,
+          siteKey: props.sitekey,
         },
-      }
-    );
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        }
+      );
 
-    if (!data.success) {
-      // recommended best practice, still return true if status doesn't match 200
-      console.log(data.errors.toString());
-      return data.errors.status != '200';
-    } else {
-      return true;
+      if (!data.success) {
+        // recommended best practice, still return true if status doesn't match 200
+        console.log(data.errors.toString());
+        res(data.errors.status != '200');
+      } else {
+        res(true);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log('axios error: ', error.message);
+      } else {
+        console.log('unexpected error: ', error);
+      }
+      res(false);
     }
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log('axios error: ', error.message);
-    } else {
-      console.log('unexpected error: ', error);
-    }
-    return false;
-  }
+  });
 }
 
 export { FCVerification };

@@ -12,6 +12,7 @@ import flatDts from 'rollup-plugin-flat-dts';
 import prettier from 'rollup-plugin-prettier';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescriptPaths from "rollup-plugin-typescript-paths";
+import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 const config = [
   {
@@ -25,6 +26,7 @@ const config = [
         }),
         json(),
         commonjs(),
+        nodePolyfills(), // Circular dependencies warning cant be fixed and will be ignored until further notice
         // Transpile with swc
         swc({
           jsc: {
@@ -45,13 +47,6 @@ const config = [
         prettier(),
     ],
       output: [
-          // Outputs the packaged lib in the preview workspace 'playground'
-          {
-              file: 'playground/src/component-lib/index.js',
-              format: 'esm',
-              banner: '/* eslint-disable */',
-              plugins: [flatDts()]
-          },
           // Outputs the packaged lib in CommonJS format
           { file: mainPath, format: 'cjs', plugins: [flatDts()] },
           // Outputs the packaged lib in ES Module format

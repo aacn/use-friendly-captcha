@@ -1,9 +1,29 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import {
-  FriendlyCaptchaProps,
-  FriendCaptchaEndpoint,
-} from '@/components/Friendly-captcha/types';
-import { WidgetInstance } from 'friendly-challenge';
+  Localization,
+  localizations,
+  WidgetInstance,
+} from 'friendly-challenge';
+
+type FriendCaptchaEndpoint = 'GLOBAL1' | 'EU1';
+
+type FriendlyCaptchaProps = {
+  siteKey: string;
+  endpoint?: FriendCaptchaEndpoint;
+  language?: keyof typeof localizations | Localization;
+  startMode?: 'auto' | 'focus' | 'none';
+};
+
+type FriendlyCaptchaWidgetProps = Required<FriendlyCaptchaProps> &
+  React.HTMLAttributes<HTMLDivElement> & {
+    solvedHandler: (solution: string) => void;
+    errorHandler: (solution: string) => void;
+  };
+
+type CaptchaStatus = {
+  solution: string | null;
+  error: any | null;
+};
 
 function FC_PUZZLE_EP(endpoint: FriendCaptchaEndpoint): string {
   switch (endpoint) {
@@ -13,6 +33,40 @@ function FC_PUZZLE_EP(endpoint: FriendCaptchaEndpoint): string {
       return 'https://api.friendlycaptcha.eu/api/v1/puzzle';
   }
 }
+
+const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
+  const container = useRef<HTMLDivElement | null>(null);
+  const widget = useRef<WidgetInstance | null>(null);
+
+  useEffect(() => {
+    if (!widget.current && container.current) {
+      widget.current = new WidgetInstance(container.current, {
+        puzzleEndpoint: FC_PUZZLE_EP(props.endpoint),
+        startMode: props.startMode,
+        doneCallback: props.solvedHandler,
+        errorCallback: props.errorHandler,
+        sitekey: props.siteKey,
+        language: props.language,
+      });
+    }
+
+    return () => {
+      if (widget.current != undefined) {
+        widget.current.destroy();
+      }
+    };
+  }, []);
+
+  return (
+    <div
+      ref={container}
+      className={props.className}
+      data-sitekey={props.siteKey}
+    />
+  );
+};
+
+const CaptchaWidget = React.memo(FriendlyCaptcha);
 
 /**
  * React hook that manages the widget and the states for the friendly captcha
@@ -28,8 +82,8 @@ function useCaptchaHook({
   language = 'de',
   startMode = 'auto',
 }: FriendlyCaptchaProps): {
-  CaptchaWidget: React.FC<React.HTMLAttributes<HTMLDivElement>>;
-  captchaStatus: { solution: string | null; error: any | null };
+  CaptchaWidget: (props: React.HTMLAttributes<HTMLDivElement>) => ReactElement;
+  captchaStatus: CaptchaStatus;
 } {
   const [captchaStatus, setCaptchaStatus] = useState<{
     solution: string | null;
@@ -44,45 +98,22 @@ function useCaptchaHook({
     setCaptchaStatus({ solution: null, error: error });
   };
 
-  const CaptchaWidget = React.useMemo(() => {
-    const FriendlyCaptcha: React.FC<React.HTMLAttributes<HTMLDivElement>> = (
-      props
-    ) => {
-      const container = useRef<HTMLDivElement | null>(null);
-      const widget = useRef<WidgetInstance | null>(null);
-
-      useEffect(() => {
-        if (!widget.current && container.current) {
-          widget.current = new WidgetInstance(container.current, {
-            puzzleEndpoint: FC_PUZZLE_EP(endpoint),
-            startMode: startMode,
-            doneCallback: solvedHandler,
-            errorCallback: errorHandler,
-            sitekey: siteKey,
-            language: language,
-          });
-        }
-
-        return () => {
-          if (widget.current != undefined) {
-            widget.current.destroy();
-          }
-        };
-      }, []);
-
+  return {
+    CaptchaWidget: (widgetProps) => {
       return (
-        <div
-          ref={container}
-          className={props.className}
-          data-sitekey={siteKey}
+        <CaptchaWidget
+          siteKey={siteKey}
+          endpoint={endpoint}
+          language={language}
+          startMode={startMode}
+          solvedHandler={solvedHandler}
+          errorHandler={errorHandler}
+          {...widgetProps}
         />
       );
-    };
-
-    return FriendlyCaptcha;
-  }, []);
-
-  return { CaptchaWidget, captchaStatus };
+    },
+    captchaStatus,
+  };
 }
 
 export { useCaptchaHook };

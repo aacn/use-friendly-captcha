@@ -1,4 +1,4 @@
-import { Example } from './component-lib';
+import { Example } from './components/';
 
 function App() {
   return (
