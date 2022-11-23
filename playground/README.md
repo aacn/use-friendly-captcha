@@ -2,6 +2,12 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Requirements
+Add a 'friendly-captcha' API key to your local .env file like this:
+`REACT_APP_AACN_FC_API_KEY=Your_Key`<br/>
+This key is required for the friendly-captcha validation server, to match the server request to
+the correct fc account.
+
 ## Available Scripts
 
 In the project directory, you can run:

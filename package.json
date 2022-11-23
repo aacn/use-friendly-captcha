@@ -22,15 +22,18 @@
   ],
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
-  "typings": "dist/index.d.ts",
-  "files": ["dist/*"],
+  "typings": "dist/index",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/*"
+  ],
   "scripts": {
-    "build": "rollup -c",
-    "build-watch": "rollup -c -w",
+    "build": "rollup -c rollup.config.js",
+    "build:watch": "rollup -c -w",
     "playground": "cd playground && yarn start",
+    "install:frozen": "yarn install --frozen-lockfile",
     "install:all:frozen": "yarn install --frozen-lockfile && cd playground && yarn install --frozen-lockfile",
     "dev": "npm-run-all --parallel build-watch playground",
-    "test": "jest --passWithNoTests",
     "generate": "plop",
     "prepare": "husky install",
     "pre-format": "lint-staged"
@@ -38,25 +41,6 @@
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json}": [
       "prettier --config .prettierrc.json --write"
-    ]
-  },
-  "jest": {
-    "transform": {
-      ".(ts|tsx)": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "modulePathIgnorePatterns": [
-      "<rootDir>/dist/",
-      "<rootDir>/playground/"
-    ],
-    "testEnvironment": "jsdom",
-    "setupFilesAfterEnv": [
-      "@testing-library/jest-dom/extend-expect"
     ]
   },
   "keywords": [
@@ -71,23 +55,22 @@
     "**/@types/node": "^18.7.13"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.2",
+    "friendly-challenge": "^0.9.5"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.2",
     "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^14.0.0",
     "@swc/cli": "^0.1.57",
     "@swc/core": "^1.2.242",
-    "@testing-library/jest-dom": "^5.16.1",
-    "@testing-library/react": "^12.1.2",
-    "@types/jest": "^27.4.0",
+    "@swc/jest": "^0.2.23",
     "@types/node": "^18.7.13",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
-    "@zerollup/ts-transform-paths": "^1.7.18",
     "autoprefixer": "^10.4.8",
     "husky": "^8.0.1",
-    "jest": "^28.1.3",
     "lint-staged": "^13.0.3",
     "npm-run-all": "^4.1.5",
     "plop": "^3.0.5",
@@ -95,17 +78,19 @@
     "prettier": "^2.7.1",
     "rollup": "^2.78.1",
     "rollup-plugin-delete": "^2.0.0",
-    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-flat-dts": "^2.0.0",
+    "rollup-plugin-node-polyfills": "^0.2.1",
     "rollup-plugin-prettier": "^2.2.2",
     "rollup-plugin-swc3": "^0.3.0",
+    "rollup-plugin-tsconfig-paths": "^1.3.0",
+    "rollup-plugin-typescript-paths": "^1.4.0",
     "tailwindcss": "^3.1.8",
-    "ts-jest": "^28.0.8",
     "ts-node": "^10.9.1",
-    "ttypescript": "^1.5.13",
-    "typescript": "^4.7.4"
+    "typescript": "^4.9.3"
   },
   "peerDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "tailwindcss": "^3.1.8",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   }
 }

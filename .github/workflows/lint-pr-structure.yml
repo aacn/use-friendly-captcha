@@ -13,7 +13,7 @@ jobs:
         uses: reaction-link/actions-lint-pull-request@v1
         with:
           config-bot-repotoken: ${{secrets.OUR_BOT_REPO_SCOPED_TOKEN}}
-          config-bot-login: reactionlinkbot
+          config-bot-login: MauriceArikoglu
           github-event: ${{toJson(github.event)}}
           use-title-regex: '(Feature|Bugfix|Hotfix|Release)(\/REA-\d+)?:\s\w+'
           use-approval-labels: '["Good Structure"]'

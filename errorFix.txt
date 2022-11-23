@@ -1,0 +1,23 @@
+1. Error: Can't find module
+- Fix: use yarn link to add your library as local dependency to your CRA (your app)
+
+2. Error: Webpack < 5 Polyfill errors all over the place
+- Fix: Add rollup plugin that adds those functions again (rollup-plugin-node-polyfills)
+
+3. Error: React hooks are not working
+- Fix: when testing librarys local, the dependency for 'react' & 'react-dom' need to be removed
+from the library dependency, otherwise there will be several instances of reacts, thus leading to errors.
+So in your lib you only have react & react-dom in your peerDeps and then you go into your CRA
+from there you do:
+'cd node_modules/react', 'yarn link'
+'cd node_moudles/react-dom', 'yarn link'
+
+now you go back to your lib and there you can now link to those modules from your CRA
+'yarn link react'
+'yarn link react-dom'
+
+This will resolve the error, that when trying to run a test, it says 'cant find module 'react', since its
+obviously not inside your package.json as dep or devDep.
+
+ref: https://github.com/facebook/react/issues/13991#issuecomment-841509933
+https://classic.yarnpkg.com/lang/en/docs/cli/link/

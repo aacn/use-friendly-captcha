@@ -1,4 +1,2 @@
-import '@/index.css';
-import { FirstComponent } from '@/components/first-component';
-
-export { FirstComponent };
+export * from '@/components/Friendly-captcha/Frontend/useCaptchaHook';
+export * from '@/components/Friendly-captcha/Backend/handleFCFormRequest';
