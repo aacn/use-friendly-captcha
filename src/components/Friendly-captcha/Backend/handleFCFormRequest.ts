@@ -1,15 +1,27 @@
-import axios from 'axios';
-
 type FCVerificationEndpoint = 'GLOBAL1' | 'EU1';
+
+type FetcherRequestBody = { solution: string; secret: string; siteKey: string };
+
+type FetcherRequestHeaders = {
+  'Content-Type': 'application/json';
+  'Accept': 'application/json';
+};
+
+type HttpPostFetcherFunction = (
+  endpoint: string,
+  requestBody: FetcherRequestBody,
+  headers: FetcherRequestHeaders
+) => Promise<CaptchaResponse | null>;
 
 type FCVerificationProps = {
   endpoint?: FCVerificationEndpoint;
   solution: string;
   secret: string;
-  sitekey?: string;
+  sitekey: string;
+  httpPostFetcher: HttpPostFetcherFunction;
 };
 
-type CaptchaResponseProps = {
+type CaptchaResponse = {
   success: boolean;
   errors: any;
 };
@@ -23,6 +35,30 @@ function FC_VERIFICATION_EP(endpoint: FCVerificationEndpoint): string {
   }
 }
 
+/* Example function for an axios fetcher function (http POST)
+async function httpPostFetcher(
+  endpoint: string,
+  requestBody: { solution: string; secret: string; siteKey: string },
+  headers: { 'Content-Type': 'application/json'; 'Accept': 'application/json' }
+): Promise<CaptchaResponse | null> {
+  return new Promise<CaptchaResponse | null>(async (res) => {
+    try {
+      const { data } = await axios.post<CaptchaResponse>(
+        endpoint,
+        { ...requestBody },
+        {
+          headers: { ...headers },
+        }
+      );
+
+      res(data);
+    } catch (err) {
+      res(null);
+    }
+  });
+}
+ */
+
 /**
  * Backend verification function that uses the FC verification API to check if the form from the submitted puzzle is valid
  * @param endpoint the endpoint to send the solved puzzle to for verification (default: global endpoint)
@@ -35,20 +71,21 @@ async function FCVerification({
 }: FCVerificationProps): Promise<boolean> {
   return new Promise<boolean>(async (res) => {
     try {
-      const { data } = await axios.post<CaptchaResponseProps>(
+      const data = await props.httpPostFetcher(
         FC_VERIFICATION_EP(endpoint),
         {
           solution: props.solution,
           secret: props.secret,
           siteKey: props.sitekey,
         },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-        }
+        { 'Content-Type': 'application/json', 'Accept': 'application/json' }
       );
+
+      if (data === null) {
+        throw new Error(
+          'Network error while trying to verify captcha solution'
+        );
+      }
 
       if (!data.success) {
         // recommended best practice, still return true if status doesn't match 200
@@ -58,11 +95,7 @@ async function FCVerification({
         res(true);
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log('axios error: ', error.message);
-      } else {
-        console.log('unexpected error: ', error);
-      }
+      console.error(error);
       res(false);
     }
   });
