@@ -36,7 +36,7 @@ function FC_VERIFICATION_EP(endpoint: FCVerificationEndpoint): string {
 }
 
 /* Example function for an axios fetcher function (http POST)
-async function httpPostFetcher(
+async function httpPostFetcherExample(
   endpoint: string,
   requestBody: { solution: string; secret: string; siteKey: string },
   headers: { 'Content-Type': 'application/json'; 'Accept': 'application/json' }
