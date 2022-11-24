@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: yarn install and build rollup
         run: |
-          yarn install --frozen-lockfile
+          yarn install:frozen
           yarn build
       - uses: actions/upload-artifact@main
         with:
@@ -43,12 +43,20 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
+      - name: yarn install for testing
+        run: |
+          yarn install:test:frozen
+      - name: run unit tests
+        working-directory: ./playground
+        run: |
+          yarn test
       - name: cypress run
+        working-directory: ./playground
         uses: cypress-io/github-action@v4.2.0
         with:
           start: yarn start
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 120
         env:
-          REACT_APP_FC_DEMO_SITE_KEY: ${{secrets.FC_DEMO_SITE_KEY}}
+          REACT_APP_FC_DEMO_SITE_KEY: ${{secrets.AACN_USE_FRIENDLY_CAPTCHA_FC_DEMO_SITE_KEY}}
           CI: true
