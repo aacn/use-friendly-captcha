@@ -50,9 +50,8 @@ jobs:
         working-directory: ./playground
         run: |
           yarn test
-      - name: cypress run
+      - uses: cypress-io/github-action@v4.2.0
         working-directory: ./playground
-        uses: cypress-io/github-action@v4.2.0
         with:
           start: yarn start
           wait-on: 'http://localhost:3000'
