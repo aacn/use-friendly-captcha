@@ -78,6 +78,7 @@ const CaptchaWidget = React.memo(FriendlyCaptcha);
  * @param language sets the widget language (default: de)
  * @param startMode sets the widget startmode (default: auto)
  * @param endpoint captcha url that is used to create the puzzle (default: global endpoint)
+ * @param showAttribution boolean to determine if the friendly captcha banner should be shown.
  * @returns { CaptchaWidget, captchaStatus } CaptchaWidget the JSX widget to add in the DOM tree and captchaStatus the state of the current captcha, containing if it's solved successfull, not successfull or hasn't been checked yet
  */
 function useCaptchaHook({

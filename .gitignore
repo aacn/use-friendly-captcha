@@ -10,10 +10,8 @@ coverage/*
 
 # production
 build/
-
 #development
 dist/
-/playground/*
 src/Legacy
 
 # misc
