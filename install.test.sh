@@ -4,7 +4,7 @@ yarn install --frozen-lockfile
 yarn link
 cd playground
 yarn install --frozen-lockfile
-yarn link '@aacn/use-friendly-captcha'
+yarn link '@aacn_org/use-friendly-captcha'
 cd node_modules/react
 yarn link
 cd ../react-dom
