@@ -9,49 +9,54 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Build & Upload Artifact
     steps:
-    - uses: actions/checkout@v3
-
-    - name: yarn install and build
-      run: |
-         yarn install --frozen-lockfile
-         yarn build
-
-    - uses: actions/upload-artifact@main
-      with:
-        name: artifact-built-by-yarn
-        path: dist/
+      - uses: actions/checkout@v3
+      - name: yarn install and build rollup
+        run: |
+          yarn install:frozen
+          yarn build
+      - uses: actions/upload-artifact@main
+        with:
+          name: artifact-built-by-yarn
+          path: dist/
 
   test:
     needs: build
-    name: Run Tests
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        node-version: [14.x, 16.x]
+        node-version: [16.x]
 
     steps:
       - uses: actions/checkout@v3
-
       - uses: actions/download-artifact@main
         with:
           name: artifact-built-by-yarn
           path: dist/
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-
-      - name: yarn install, and test
+      - name: yarn install for testing
         run: |
-          yarn install --frozen-lockfile
+          yarn install:test:frozen
+      - name: run unit tests
+        working-directory: ./playground
+        run: |
           yarn test
+      - name: run cypress
+        uses: cypress-io/github-action@v4.2.0
+        with:
+          working-directory: ./playground
+          start: yarn start
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 120
         env:
+          REACT_APP_FC_DEMO_SITE_KEY: ${{secrets.AACN_USE_FRIENDLY_CAPTCHA_FC_DEMO_SITE_KEY}}
           CI: true
+
 
   release:
     needs: test
