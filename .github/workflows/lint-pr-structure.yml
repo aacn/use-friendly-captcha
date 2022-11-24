@@ -15,6 +15,6 @@ jobs:
           config-bot-repotoken: ${{secrets.OUR_BOT_REPO_SCOPED_TOKEN}}
           config-bot-login: MauriceArikoglu
           github-event: ${{toJson(github.event)}}
-          use-title-regex: '(Feature|Bugfix|Hotfix|Release)(\/REA-\d+)?:\s\w+'
+          use-title-regex: '(Feature|Bugfix|Hotfix|Chore|Release)(\/REA-\d+)?:\s\w+'
           use-approval-labels: '["Good Structure"]'
-          use-explanation-title: '["- There must be a title in this format: `Feature|Bugfix|Hotfix|Release: Title`","- If applicable, add your issue ticket (e.g. `REA-100`) with a slash in the title","- Use `Feature` for enhancements or new functionality","- Use `Bugfix` only if you fixed a known bug","- Use `Hotfix` for problems introduced by previous merges","- Use proper capitalization in your title"]'
+          use-explanation-title: '["- There must be a title in this format: `Feature|Bugfix|Hotfix|Chore|Release: Title`","- If applicable, add your issue ticket (e.g. `REA-100`) with a slash in the title","- Use `Feature` for enhancements or new functionality","- Use `Bugfix` only if you fixed a known bug","- Use `Hotfix` for problems introduced by previous merges","- Use `Chore for updating grunt tasks etc; no production code change` for problems introduced by previous merges","- Use proper capitalization in your title"]'
