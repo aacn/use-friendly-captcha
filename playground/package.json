@@ -31,7 +31,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test __tests__/frontend.test.ts --watchAll",
+    "test": "react-scripts test --watchAll=false --passWithNoTests",
     "eject": "react-scripts eject",
     "cypress:open": "cypress open"
   },
