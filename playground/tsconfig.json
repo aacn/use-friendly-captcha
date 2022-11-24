@@ -22,6 +22,6 @@
     "types": ["node", "jest"]
   },
   "include": [
-    "src/**/*", "__tests__"
+    "src/**/*", "src/__tests__"
   ]
 }
