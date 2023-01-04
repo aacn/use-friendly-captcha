@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import submitFormToServer from './api/submitFormToServer';
-import { useCaptchaHook } from "@aacn_org/use-friendly-captcha";
+import { useCaptchaHook } from "@aacn.eu/use-friendly-captcha";
 
 const Example: FC = () => {
   const siteKey = process.env.REACT_APP_FC_DEMO_SITE_KEY!;
