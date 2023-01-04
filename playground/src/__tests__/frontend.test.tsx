@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks'
-import { useCaptchaHook } from "@aacn_org/use-friendly-captcha";
+import { useCaptchaHook } from "@aacn.eu/use-friendly-captcha";
 
 const DEMO_SITEKEY = "FC123456789ABC";
 
