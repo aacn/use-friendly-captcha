@@ -1,6 +1,6 @@
 # Use Friendly Captcha hook
 ## Usage
-The library has function for both frontend and backend. Both work independent of each other.
+The library has functions for both frontend and backend. Both of them work independent of each other.
 
 ### Frontend
 Include the `useCaptchaHook()` in your selected file. From there you can then query the widget
@@ -12,13 +12,13 @@ siteKey: string;
 endpoint?: FC_PUZZLE_EP; enum for the currently available endpoints (EU & global)
 language?: keyof typeof localizations | Localization;
 startMode?: "auto" | "focus" | "none";
-showAttribution?: boolean
+showAttribution: boolean
 ```
 
 <b>The hook provides the following parameters:</b><br/>
 - `CaptchaWidget` returns the HTML authentification widget.
 - `captchaStatus.solution` is used to determine if the puzzle was already solved (`string`) or not (`null`)
-- `captcahStatus.error` is used to determine if an error occured while solving (`string`) or not (`null`)
+- `captchaStatus.error` is used to determine if an error occured while solving (`string`) or not (`null`)
 
 ### Backend
 backend wise this library provides a function that uses the FriendlyCaptcha verification
