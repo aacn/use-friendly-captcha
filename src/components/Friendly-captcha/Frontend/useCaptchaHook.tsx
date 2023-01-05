@@ -1,4 +1,11 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   Localization,
   localizations,
@@ -18,12 +25,20 @@ type FriendlyCaptchaProps = {
 type FriendlyCaptchaWidgetProps = Required<FriendlyCaptchaProps> &
   React.HTMLAttributes<HTMLDivElement> & {
     solvedHandler: (solution: string) => void;
-    errorHandler: (solution: string) => void;
+    errorHandler: (error: FriendlyServerErrorResponse) => void;
+    resetHandler: () => void;
+    captchaRendered: boolean;
+    setCaptchaRendered: Dispatch<SetStateAction<boolean>>;
   };
+
+type FriendlyServerErrorResponse = {
+  code: string;
+  description: string;
+};
 
 type CaptchaStatus = {
   solution: string | null;
-  error: any | null;
+  error: FriendlyServerErrorResponse | null;
 };
 
 function FC_PUZZLE_EP(endpoint: FriendCaptchaEndpoint): string {
@@ -36,11 +51,12 @@ function FC_PUZZLE_EP(endpoint: FriendCaptchaEndpoint): string {
 }
 
 const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
+  // container is set in return function, where the <div> gets the container as ref attribute.
   const container = useRef<HTMLDivElement | null>(null);
   const widget = useRef<WidgetInstance | null>(null);
 
   useEffect(() => {
-    if (!widget.current && container.current) {
+    if (!props.captchaRendered && container.current) {
       widget.current = new WidgetInstance(container.current, {
         puzzleEndpoint: FC_PUZZLE_EP(props.endpoint),
         startMode: props.startMode,
@@ -49,11 +65,14 @@ const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
         sitekey: props.siteKey,
         language: props.language,
       });
+      props.setCaptchaRendered(true);
     }
 
     return () => {
-      if (widget.current != undefined) {
+      if (widget.current !== null && props.captchaRendered) {
         widget.current.destroy();
+        props.setCaptchaRendered(false);
+        props.resetHandler();
       }
     };
   }, []);
@@ -93,15 +112,21 @@ function useCaptchaHook({
 } {
   const [captchaStatus, setCaptchaStatus] = useState<{
     solution: string | null;
-    error: any | null;
+    error: FriendlyServerErrorResponse | null;
   }>({ solution: null, error: null });
+  const [captchaRendered, setCaptchaRendered] = useState<boolean>(false);
 
   const solvedHandler = (solution: string) => {
     setCaptchaStatus({ solution: solution, error: null });
   };
 
-  const errorHandler = (error: any) => {
+  const errorHandler = (error: FriendlyServerErrorResponse) => {
+    console.log(error.description);
     setCaptchaStatus({ solution: null, error: error });
+  };
+
+  const resetHandler = () => {
+    setCaptchaStatus({ solution: null, error: null });
   };
 
   return {
@@ -115,6 +140,9 @@ function useCaptchaHook({
           showAttribution={showAttribution}
           solvedHandler={solvedHandler}
           errorHandler={errorHandler}
+          resetHandler={resetHandler}
+          captchaRendered={captchaRendered}
+          setCaptchaRendered={setCaptchaRendered}
           {...widgetProps}
         />
       );
