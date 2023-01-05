@@ -9,7 +9,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "private": false,
   "engines": {
@@ -62,8 +62,6 @@
     "**/@types/node": "^18.7.13"
   },
   "dependencies": {
-    "axios": "^0.27.2",
-    "dotenv": "^16.0.2",
     "friendly-challenge": "^0.9.5"
   },
   "devDependencies": {

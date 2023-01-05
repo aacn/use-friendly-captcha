@@ -25,15 +25,20 @@ type FriendlyCaptchaProps = {
 type FriendlyCaptchaWidgetProps = Required<FriendlyCaptchaProps> &
   React.HTMLAttributes<HTMLDivElement> & {
     solvedHandler: (solution: string) => void;
-    errorHandler: (solution: string) => void;
+    errorHandler: (error: FriendlyServerErrorResponse) => void;
     resetHandler: () => void;
     captchaRendered: boolean;
     setCaptchaRendered: Dispatch<SetStateAction<boolean>>;
   };
 
+type FriendlyServerErrorResponse = {
+  code: string;
+  description: string;
+};
+
 type CaptchaStatus = {
   solution: string | null;
-  error: any | null;
+  error: FriendlyServerErrorResponse | null;
 };
 
 function FC_PUZZLE_EP(endpoint: FriendCaptchaEndpoint): string {
@@ -52,7 +57,6 @@ const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
 
   useEffect(() => {
     if (!props.captchaRendered && container.current) {
-      props.setCaptchaRendered(true);
       widget.current = new WidgetInstance(container.current, {
         puzzleEndpoint: FC_PUZZLE_EP(props.endpoint),
         startMode: props.startMode,
@@ -61,10 +65,11 @@ const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
         sitekey: props.siteKey,
         language: props.language,
       });
+      props.setCaptchaRendered(true);
     }
 
     return () => {
-      if (widget.current != null && props.captchaRendered) {
+      if (widget.current !== null && props.captchaRendered) {
         widget.current.destroy();
         props.setCaptchaRendered(false);
         props.resetHandler();
@@ -107,7 +112,7 @@ function useCaptchaHook({
 } {
   const [captchaStatus, setCaptchaStatus] = useState<{
     solution: string | null;
-    error: any | null;
+    error: FriendlyServerErrorResponse | null;
   }>({ solution: null, error: null });
   const [captchaRendered, setCaptchaRendered] = useState<boolean>(false);
 
@@ -115,7 +120,8 @@ function useCaptchaHook({
     setCaptchaStatus({ solution: solution, error: null });
   };
 
-  const errorHandler = (error: any) => {
+  const errorHandler = (error: FriendlyServerErrorResponse) => {
+    console.log(error.description);
     setCaptchaStatus({ solution: null, error: error });
   };
 
