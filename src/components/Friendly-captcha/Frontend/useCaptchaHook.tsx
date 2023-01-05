@@ -1,4 +1,11 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   Localization,
   localizations,
@@ -19,6 +26,9 @@ type FriendlyCaptchaWidgetProps = Required<FriendlyCaptchaProps> &
   React.HTMLAttributes<HTMLDivElement> & {
     solvedHandler: (solution: string) => void;
     errorHandler: (solution: string) => void;
+    resetHandler: () => void;
+    captchaRendered: boolean;
+    setCaptchaRendered: Dispatch<SetStateAction<boolean>>;
   };
 
 type CaptchaStatus = {
@@ -36,11 +46,13 @@ function FC_PUZZLE_EP(endpoint: FriendCaptchaEndpoint): string {
 }
 
 const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
+  // container is set in return function, where the <div> gets the container as ref attribute.
   const container = useRef<HTMLDivElement | null>(null);
   const widget = useRef<WidgetInstance | null>(null);
 
   useEffect(() => {
-    if (!widget.current && container.current) {
+    if (!props.captchaRendered && container.current) {
+      props.setCaptchaRendered(true);
       widget.current = new WidgetInstance(container.current, {
         puzzleEndpoint: FC_PUZZLE_EP(props.endpoint),
         startMode: props.startMode,
@@ -52,8 +64,10 @@ const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
     }
 
     return () => {
-      if (widget.current != undefined) {
+      if (widget.current != null && props.captchaRendered) {
         widget.current.destroy();
+        props.setCaptchaRendered(false);
+        props.resetHandler();
       }
     };
   }, []);
@@ -95,6 +109,7 @@ function useCaptchaHook({
     solution: string | null;
     error: any | null;
   }>({ solution: null, error: null });
+  const [captchaRendered, setCaptchaRendered] = useState<boolean>(false);
 
   const solvedHandler = (solution: string) => {
     setCaptchaStatus({ solution: solution, error: null });
@@ -102,6 +117,10 @@ function useCaptchaHook({
 
   const errorHandler = (error: any) => {
     setCaptchaStatus({ solution: null, error: error });
+  };
+
+  const resetHandler = () => {
+    setCaptchaStatus({ solution: null, error: null });
   };
 
   return {
@@ -115,6 +134,9 @@ function useCaptchaHook({
           showAttribution={showAttribution}
           solvedHandler={solvedHandler}
           errorHandler={errorHandler}
+          resetHandler={resetHandler}
+          captchaRendered={captchaRendered}
+          setCaptchaRendered={setCaptchaRendered}
           {...widgetProps}
         />
       );
