@@ -44,3 +44,9 @@ function fetcherExample(
     headers: { 'Content-Type': 'application/json'; 'Accept': 'application/json'; }
 ) => Promise<{ success: boolean; errors: any; } | null>
 ```
+
+### Examples
+We provided basic examples in the `/examples` folder, on how to use this library in [React](https://github.com/aacn/use-friendly-captcha/tree/main/examples/react-example) and [Nextjs](https://github.com/aacn/use-friendly-captcha/tree/main/examples/nextjs).
+Both examples are written in TypeScript and are kept simple to focus on easy readability and presenting the utility of the function from this library.
+If you want to run the examples on your machine, make sure to read the respective README files,
+to add all requirements that are needed.
