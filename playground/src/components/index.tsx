@@ -4,7 +4,7 @@ import { useCaptchaHook } from "@aacn.eu/use-friendly-captcha";
 
 const Example: FC = () => {
   const siteKey = process.env.REACT_APP_FC_DEMO_SITE_KEY!;
-  const captchaManager = useCaptchaHook({ siteKey: siteKey, showAttribution: false });
+  const captchaManager = useCaptchaHook({ siteKey: siteKey, showAttribution: true, startMode: "none" });
   const [submitStatus, setSubmitStatus] = useState<boolean | null>(null);
 
   async function formExampleSubmitHandler(
@@ -48,7 +48,7 @@ const Example: FC = () => {
           </label>
           <input id="input_example_2" type="text" />
         </div>
-        {captchaManager.CaptchaWidget({ className: 'bg-cyan-800' })}
+        {captchaManager.CaptchaWidget({ className: 'bg-cyan-800' }, { icon: {color: "green", background: 'yellow'}, text: {color: "blue"}})}
         {captchaManager.captchaStatus.solution !== null && (
           <React.Fragment>
             <p className="text-xl text-black absolute top-10">solved!</p>

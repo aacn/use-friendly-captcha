@@ -62,6 +62,7 @@
     "**/@types/node": "^18.7.13"
   },
   "dependencies": {
+    "csstype": "^3.1.1",
     "friendly-challenge": "^0.9.5"
   },
   "devDependencies": {
