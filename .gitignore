@@ -13,6 +13,7 @@ build/
 #development
 dist/
 src/Legacy
+.next
 
 # misc
 .DS_Store

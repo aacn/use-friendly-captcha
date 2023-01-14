@@ -11,6 +11,7 @@ import {
   localizations,
   WidgetInstance,
 } from 'friendly-challenge';
+import type * as CSS from 'csstype';
 
 type FriendCaptchaEndpoint = 'GLOBAL1' | 'EU1';
 
@@ -22,6 +23,12 @@ type FriendlyCaptchaProps = {
   showAttribution: boolean;
 };
 
+type CustomWidgetStyle = {
+  icon?: CSS.Properties;
+  button?: CSS.Properties;
+  text?: CSS.Properties;
+};
+
 type FriendlyCaptchaWidgetProps = Required<FriendlyCaptchaProps> &
   React.HTMLAttributes<HTMLDivElement> & {
     solvedHandler: (solution: string) => void;
@@ -29,6 +36,7 @@ type FriendlyCaptchaWidgetProps = Required<FriendlyCaptchaProps> &
     resetHandler: () => void;
     captchaRendered: boolean;
     setCaptchaRendered: Dispatch<SetStateAction<boolean>>;
+    customWidgetStyle?: CustomWidgetStyle;
   };
 
 type FriendlyServerErrorResponse = {
@@ -48,6 +56,18 @@ function FC_PUZZLE_EP(endpoint: FriendCaptchaEndpoint): string {
     case 'EU1':
       return 'https://api.friendlycaptcha.eu/api/v1/puzzle';
   }
+}
+
+function cssToString(css: CSS.Properties | undefined): string {
+  if (css === undefined) {
+    return '';
+  }
+
+  let cssString = '';
+  Object.entries(css).forEach(([key, value]) => {
+    cssString = cssString + ` ${key}: ${value};`;
+  });
+  return cssString;
 }
 
 const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
@@ -79,9 +99,29 @@ const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
 
   return (
     <>
-      <style>{!props.showAttribution && '.frc-banner { display: none }'}</style>
+      {!props.showAttribution && (
+        <style>{'.frc-banner { display: none }'}</style>
+      )}
+      {props.customWidgetStyle && (
+        <style>
+          {props.customWidgetStyle.icon &&
+            `#use-friendly-captcha-container .frc-icon {${cssToString(
+              props.customWidgetStyle.icon
+            )}}`}
+          {props.customWidgetStyle.button &&
+            `#use-friendly-captcha-container .frc-button {${cssToString(
+              props.customWidgetStyle.button
+            )}}`}
+          {props.customWidgetStyle.text &&
+            `#use-friendly-captcha-container .frc-text {${cssToString(
+              props.customWidgetStyle.text
+            )}}`}
+        </style>
+      )}
+
       <div
         ref={container}
+        id="use-friendly-captcha-container"
         className={props.className}
         data-sitekey={props.siteKey}
       />
@@ -107,7 +147,10 @@ function useCaptchaHook({
   startMode = 'auto',
   showAttribution = true,
 }: FriendlyCaptchaProps): {
-  CaptchaWidget: (props: React.HTMLAttributes<HTMLDivElement>) => ReactElement;
+  CaptchaWidget: (
+    props: React.HTMLAttributes<HTMLDivElement>,
+    customWidgetStyle?: CustomWidgetStyle
+  ) => ReactElement;
   captchaStatus: CaptchaStatus;
 } {
   const [captchaStatus, setCaptchaStatus] = useState<{
@@ -130,7 +173,7 @@ function useCaptchaHook({
   };
 
   return {
-    CaptchaWidget: (widgetProps) => {
+    CaptchaWidget: (widgetProps, customWidgetStyle?) => {
       return (
         <CaptchaWidget
           siteKey={siteKey}
@@ -143,6 +186,7 @@ function useCaptchaHook({
           resetHandler={resetHandler}
           captchaRendered={captchaRendered}
           setCaptchaRendered={setCaptchaRendered}
+          customWidgetStyle={customWidgetStyle}
           {...widgetProps}
         />
       );

@@ -14,11 +14,26 @@ language?: keyof typeof localizations | Localization;
 startMode?: "auto" | "focus" | "none";
 showAttribution: boolean
 ```
-
+<br/>
 <b>The hook provides the following parameters:</b><br/>
 - `CaptchaWidget` returns the HTML authentification widget.
 - `captchaStatus.solution` is used to determine if the puzzle was already solved (`string`) or not (`null`)
 - `captchaStatus.error` is used to determine if an error occured while solving (`string`) or not (`null`)
+
+<br/><b>CaptchaWidget custom props</b><br/>
+When the `CaptchaWidget` gets rendered, you can add additional properties:<br/><br/>
+`props: HTMLAttributes` This includes all possible html attributes. Therefor this is the entry point to add the `className` attribute,
+to add custom styling to the outer captcha container. Here can you either directly add TailwindCSS classes or define a custom class for
+future styling in the .css file of the project.
+<br/><br/>
+`customWidgetStyle` allows up to three attributes for specific stylings that are directly applied to the components:
+- `icon` The icon of the widget
+- `button` The submit button of the widget
+- `text` All text elements that appear inside the widget
+<br/>These attributes are all optional and if used, they expect a css object like the following example:
+```js
+CustomWidgetStyle = { icon: {color: "green", background: "yellow"}, text: {color: "blue"} }
+```
 
 ### Backend
 backend wise this library provides a function that uses the FriendlyCaptcha verification

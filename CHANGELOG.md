@@ -4,3 +4,6 @@
 
 ### v1.0.2
 - Fix a bug, where the widget instantly destroyed itself, caused by reactStrictMode
+
+### v1.1.0
+- Add a feature to be able to add custom css to specific widget parts
