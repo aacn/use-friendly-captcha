@@ -10,17 +10,16 @@ coverage/*
 
 # production
 build/
-
 #development
 dist/
 src/Legacy
 .next
 
+# webstorm
+.idea
+
 # misc
 .DS_Store
-
-# WebStorm
-/.idea
 
 # env
 .env
