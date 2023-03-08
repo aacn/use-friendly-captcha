@@ -15,6 +15,9 @@ dist/
 src/Legacy
 .next
 
+# webstorm
+.idea
+
 # misc
 .DS_Store
 
