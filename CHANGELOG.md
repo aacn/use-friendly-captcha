@@ -13,3 +13,6 @@
 
 ### v1.1.2
 - Update react & react-dom peer dependencies
+- 
+### v1.1.3
+- Update more peer dependencies
