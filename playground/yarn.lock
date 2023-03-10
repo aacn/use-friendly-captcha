@@ -5142,23 +5142,23 @@ fresh@0.5.2:
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
   integrity sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=
 
-friendly-challenge@^0.9.5:
-  version "0.9.5"
-  resolved "https://registry.yarnpkg.com/friendly-challenge/-/friendly-challenge-0.9.5.tgz#f36ecbf34265093acb8a46b5212329dff90eb981"
-  integrity sha512-f98xzasSs+33mEf1Z2Ferb/Ojyu+ESIyIiouJicHdk4cdqnsSQFtnh1sJoae0d9/GI+azA6oIRNtpU1rRT0BLg==
+friendly-challenge@^0.9.11:
+  version "0.9.11"
+  resolved "https://registry.yarnpkg.com/friendly-challenge/-/friendly-challenge-0.9.11.tgz#b311ae47c826bc99b4fd5012942b526c049af6d1"
+  integrity sha512-5kpn5Fg4noxFDNl1OKrdisL5jCa7CYECc3RZ+ToUwEuTj1yg7ayQFofOTtAhiT+lmwp4VE4oxHqQadg5hvJEXg==
   dependencies:
     "@babel/runtime-corejs3" "^7.10.4"
     core-js "^3.6.5"
-    friendly-pow "0.2.1"
+    friendly-pow "0.2.2"
     object-assign-polyfill "^0.1.0"
     promis "^1.1.4"
     url-polyfill "^1.1.10"
     whatwg-fetch "^3.4.1"
 
-friendly-pow@0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/friendly-pow/-/friendly-pow-0.2.1.tgz#4c8a8be2a6e4f486436285fe2b5f18c491a5366d"
-  integrity sha512-44+5c3DDEHHx6a4NwIAvZ5nwLJblVQY4+rD2pv+yB4lkRBQvi+HlfbR0/caQjoRlJss9nducsWjg4LpApeNNKg==
+friendly-pow@0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/friendly-pow/-/friendly-pow-0.2.2.tgz#c3bbcf35dc9ef15e0ee90a30a0cf6eb3beaad4f3"
+  integrity sha512-oTGCqr6d9iIv8TEWmqJK8p1Gkr9hDEgb7g22pTCDZz+Y9zaaWtCNxmrD+/+KIYbf1/64rgba5Vj4hU7AxE/vkA==
 
 fs-extra@^10.0.0:
   version "10.0.0"

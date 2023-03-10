@@ -4,7 +4,7 @@ import { useCaptchaHook } from "@aacn.eu/use-friendly-captcha";
 
 const Example: FC = () => {
   const siteKey = process.env.REACT_APP_FC_DEMO_SITE_KEY!;
-  const captchaManager = useCaptchaHook({ siteKey: siteKey, showAttribution: true, startMode: "none" });
+  const captchaManager = useCaptchaHook({ siteKey: siteKey, showAttribution: true, startMode: "none", debug: true });
   const [submitStatus, setSubmitStatus] = useState<boolean | null>(null);
 
   async function formExampleSubmitHandler(

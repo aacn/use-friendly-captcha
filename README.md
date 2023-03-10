@@ -6,13 +6,15 @@ The library has functions for both frontend and backend. Both of them work indep
 Include the `useCaptchaHook()` in your selected file. From there you can then query the widget
 and state from the hook, for you to manage and use in your form.
 
+Please be aware that the `friendly-challenge` library is a necessary peer dependency since version 1.2.0
+
 <b>The hook expects the following properties:</b><br/>
 ```
 siteKey: string;
 endpoint?: FC_PUZZLE_EP; enum for the currently available endpoints (EU & global)
 language?: keyof typeof localizations | Localization;
 startMode?: "auto" | "focus" | "none";
-showAttribution: boolean
+showAttribution: boolean;
 ```
 <br/>
 <b>The hook provides the following parameters:</b><br/>

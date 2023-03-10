@@ -16,3 +16,6 @@
 - 
 ### v1.1.3
 - Update more peer dependencies
+
+### v1.2.0
+- Add support for next 13

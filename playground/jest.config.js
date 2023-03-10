@@ -3,6 +3,9 @@ module.exports = {
     "transform": {
         "\\.[jt]sx?$": "babel-jest"
     },
+    "transformIgnorePatterns": [
+        "node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)"
+    ],
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
         "moduleFileExtensions": [
         "ts",
