@@ -4,6 +4,7 @@
   "private": false,
   "license": "MIT",
   "dependencies": {
+    "friendly-challenge": "^0.9.11",
     "@aacn.eu/use-friendly-captcha": "^1.0.2",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",

@@ -21,6 +21,7 @@ type FriendlyCaptchaProps = {
   language?: keyof typeof localizations | Localization;
   startMode?: 'auto' | 'focus' | 'none';
   showAttribution: boolean;
+  debug?: boolean;
 };
 
 type CustomWidgetStyle = {
@@ -54,7 +55,7 @@ function FC_PUZZLE_EP(endpoint: FriendCaptchaEndpoint): string {
     case 'GLOBAL1':
       return 'https://api.friendlycaptcha.com/api/v1/puzzle';
     case 'EU1':
-      return 'https://api.friendlycaptcha.eu/api/v1/puzzle';
+      return 'https://eu-api.friendlycaptcha.eu/api/v1/puzzle';
   }
 }
 
@@ -76,7 +77,15 @@ const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
   const widget = useRef<WidgetInstance | null>(null);
 
   useEffect(() => {
+    if (props.debug) {
+      console.log(
+        `Called useEffect hook with params:\ncaptchaRendered: ${props.captchaRendered}\ncontainer: ${container.current}`
+      );
+    }
     if (!props.captchaRendered && container.current) {
+      if (props.debug) {
+        console.log('Creating new widget instance');
+      }
       widget.current = new WidgetInstance(container.current, {
         puzzleEndpoint: FC_PUZZLE_EP(props.endpoint),
         startMode: props.startMode,
@@ -85,11 +94,18 @@ const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
         sitekey: props.siteKey,
         language: props.language,
       });
+
+      if (props.debug) {
+        console.log('Set captcha to rendered: true');
+      }
       props.setCaptchaRendered(true);
     }
 
     return () => {
       if (widget.current !== null && props.captchaRendered) {
+        if (props.debug) {
+          console.log('Destroying current widget instance');
+        }
         widget.current.destroy();
         props.setCaptchaRendered(false);
         props.resetHandler();
@@ -138,6 +154,7 @@ const CaptchaWidget = React.memo(FriendlyCaptcha);
  * @param startMode sets the widget startmode (default: auto)
  * @param endpoint captcha url that is used to create the puzzle (default: global endpoint)
  * @param showAttribution boolean to determine if the friendly captcha banner should be shown.
+ * @param debug enable debug mode, which logs the hooks process, which helps with debugging.
  * @returns { CaptchaWidget, captchaStatus } CaptchaWidget the JSX widget to add in the DOM tree and captchaStatus the state of the current captcha, containing if it's solved successfull, not successfull or hasn't been checked yet
  */
 function useCaptchaHook({
@@ -146,6 +163,7 @@ function useCaptchaHook({
   language = 'de',
   startMode = 'auto',
   showAttribution = true,
+  debug = false,
 }: FriendlyCaptchaProps): {
   CaptchaWidget: (
     props: React.HTMLAttributes<HTMLDivElement>,
@@ -160,6 +178,9 @@ function useCaptchaHook({
   const [captchaRendered, setCaptchaRendered] = useState<boolean>(false);
 
   const solvedHandler = (solution: string) => {
+    if (debug) {
+      console.log(`Set captcha to solved, with solution: ${solution}`);
+    }
     setCaptchaStatus({ solution: solution, error: null });
   };
 
@@ -169,6 +190,9 @@ function useCaptchaHook({
   };
 
   const resetHandler = () => {
+    if (debug) {
+      console.log('Reseting captcha status');
+    }
     setCaptchaStatus({ solution: null, error: null });
   };
 
@@ -187,6 +211,7 @@ function useCaptchaHook({
           captchaRendered={captchaRendered}
           setCaptchaRendered={setCaptchaRendered}
           customWidgetStyle={customWidgetStyle}
+          debug={debug}
           {...widgetProps}
         />
       );
