@@ -19,3 +19,6 @@
 
 ### v1.2.0
 - Add support for next 13
+
+### v1.2.1
+- Update range of possible css attributes to style the captcha widget
