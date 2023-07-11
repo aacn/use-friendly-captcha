@@ -75,7 +75,7 @@ export default function Home() {
                       className="w-full p-1.5 mt-10 bg-cyan-400 rounded cursor-pointer transition-colors hover:bg-cyan-300 disabled:cursor-default disabled:bg-gray-800"
                   />
               }
-              {captchaHook.CaptchaWidget({ className: 'min-w-full pl-2 pb-1 mt-6 bg-cyan-800 rounded' })}
+              {captchaHook.CaptchaWidget({ className: 'min-w-full pl-2 pb-1 mt-6 bg-cyan-800 rounded' }, {icon: { stroke: 'turquoise' }, button: { backgroundColor: 'turquoise', borderRadius: '50px' }})}
           </form>
       </main>
     </>

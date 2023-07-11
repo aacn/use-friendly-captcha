@@ -18,8 +18,7 @@
     "> 1%"
   ],
   "dependencies": {
-    "friendly-challenge": "^0.9.11",
-    "@aacn.eu/use-friendly-captcha": "^1.0.2",
+    "@aacn.eu/use-friendly-captcha": "^1.2.3",
     "@next/font": "13.1.1",
     "@types/node": "18.11.18",
     "@types/react": "18.0.26",
@@ -27,6 +26,7 @@
     "axios": "^1.2.2",
     "eslint": "8.31.0",
     "eslint-config-next": "13.1.1",
+    "friendly-challenge": "^0.9.11",
     "next": "13.1.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
