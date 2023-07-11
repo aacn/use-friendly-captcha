@@ -59,13 +59,31 @@ function FC_PUZZLE_EP(endpoint: FriendCaptchaEndpoint): string {
   }
 }
 
+function hasUppercase(str: string): boolean {
+  for (let i = 0; i < str.length; i++) {
+    if (str[i] !== str[i].toLowerCase()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function transformToKebabCase(str: string): string {
+  return str.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
+}
+
 function cssToString(css: CSS.Properties | undefined): string {
   if (css === undefined) {
     return '';
   }
 
   let cssString = '';
+
   Object.entries(css).forEach(([key, value]) => {
+    if (hasUppercase(key)) {
+      key = transformToKebabCase(key);
+    }
+
     cssString = cssString + ` ${key}: ${value};`;
   });
   return cssString;
@@ -118,23 +136,21 @@ const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
       {!props.showAttribution && (
         <style>{'.frc-banner { display: none }'}</style>
       )}
-      {props.customWidgetStyle && (
-        <style>
-          {props.customWidgetStyle.icon &&
-            `#use-friendly-captcha-container .frc-icon {${cssToString(
-              props.customWidgetStyle.icon
-            )}}`}
-          {props.customWidgetStyle.button &&
-            `#use-friendly-captcha-container .frc-button {${cssToString(
-              props.customWidgetStyle.button
-            )}}`}
-          {props.customWidgetStyle.text &&
-            `#use-friendly-captcha-container .frc-text {${cssToString(
-              props.customWidgetStyle.text
-            )}}`}
-        </style>
+      {props.customWidgetStyle?.icon && (
+        <style>{`#use-friendly-captcha-container .frc-icon {${cssToString(
+          props.customWidgetStyle.icon
+        )}}`}</style>
       )}
-
+      {props.customWidgetStyle?.button && (
+        <style>{`#use-friendly-captcha-container .frc-button {${cssToString(
+          props.customWidgetStyle.button
+        )}}`}</style>
+      )}
+      {props.customWidgetStyle?.text && (
+        <style>{`#use-friendly-captcha-container .frc-text {${cssToString(
+          props.customWidgetStyle.text
+        )}}`}</style>
+      )}
       <div
         ref={container}
         id="use-friendly-captcha-container"

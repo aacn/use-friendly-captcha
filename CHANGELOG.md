@@ -19,3 +19,12 @@
 
 ### v1.2.0
 - Add support for next 13
+
+### v1.2.1
+- Update range of possible css attributes to style the captcha widget
+
+### v1.2.2
+- Fix nextjs hydration error, that occurs when rendering the css for the captcha widget
+
+### v1.2.3
+- Adjust nextjs hydration for style tags

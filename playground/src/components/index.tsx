@@ -48,7 +48,7 @@ const Example: FC = () => {
           </label>
           <input id="input_example_2" type="text" />
         </div>
-        {captchaManager.CaptchaWidget({ className: 'bg-cyan-800' }, { icon: {color: "green", background: 'yellow'}, text: {color: "blue"}})}
+        {captchaManager.CaptchaWidget({ className: 'bg-cyan-800' }, { icon: {color: "green", background: 'yellow'}, text: {color: "blue"}, button: {borderRadius: '50px'}})}
         {captchaManager.captchaStatus.solution !== null && (
           <React.Fragment>
             <p className="text-xl text-black absolute top-10">solved!</p>
