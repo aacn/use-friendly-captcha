@@ -36,6 +36,7 @@ type FriendlyCaptchaWidgetProps = Required<FriendlyCaptchaProps> &
     errorHandler: (error: FriendlyServerErrorResponse) => void;
     resetHandler: () => void;
     captchaRendered: boolean;
+    captchaWidget: React.MutableRefObject<WidgetInstance | null>;
     setCaptchaRendered: Dispatch<SetStateAction<boolean>>;
     customWidgetStyle?: CustomWidgetStyle;
   };
@@ -92,7 +93,6 @@ function cssToString(css: CSS.Properties | undefined): string {
 const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
   // container is set in return function, where the <div> gets the container as ref attribute.
   const container = useRef<HTMLDivElement | null>(null);
-  const widget = useRef<WidgetInstance | null>(null);
 
   useEffect(() => {
     if (props.debug) {
@@ -104,7 +104,7 @@ const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
       if (props.debug) {
         console.log('Creating new widget instance');
       }
-      widget.current = new WidgetInstance(container.current, {
+      props.captchaWidget.current = new WidgetInstance(container.current, {
         puzzleEndpoint: FC_PUZZLE_EP(props.endpoint),
         startMode: props.startMode,
         doneCallback: props.solvedHandler,
@@ -120,11 +120,11 @@ const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
     }
 
     return () => {
-      if (widget.current !== null && props.captchaRendered) {
+      if (props.captchaWidget.current !== null && props.captchaRendered) {
         if (props.debug) {
           console.log('Destroying current widget instance');
         }
-        widget.current.destroy();
+        props.captchaWidget.current.destroy();
         props.setCaptchaRendered(false);
         props.resetHandler();
       }
@@ -186,12 +186,14 @@ function useCaptchaHook({
     customWidgetStyle?: CustomWidgetStyle
   ) => ReactElement;
   captchaStatus: CaptchaStatus;
+  resetWidget: () => void;
 } {
   const [captchaStatus, setCaptchaStatus] = useState<{
     solution: string | null;
     error: FriendlyServerErrorResponse | null;
   }>({ solution: null, error: null });
   const [captchaRendered, setCaptchaRendered] = useState<boolean>(false);
+  const captchaWidget = useRef<WidgetInstance | null>(null);
 
   const solvedHandler = (solution: string) => {
     if (debug) {
@@ -212,6 +214,23 @@ function useCaptchaHook({
     setCaptchaStatus({ solution: null, error: null });
   };
 
+  const resetWidget = () => {
+    if (debug) {
+      console.log('Captcha is getting resetted.');
+    }
+
+    if (captchaWidget.current !== null) {
+      captchaWidget.current?.reset();
+      setCaptchaStatus({ solution: null, error: null });
+    } else {
+      if (debug) {
+        console.log(
+          "Couldn't reset widget, as widget wasn't instantiated yet."
+        );
+      }
+    }
+  };
+
   return {
     CaptchaWidget: (widgetProps, customWidgetStyle?) => {
       return (
@@ -225,6 +244,7 @@ function useCaptchaHook({
           errorHandler={errorHandler}
           resetHandler={resetHandler}
           captchaRendered={captchaRendered}
+          captchaWidget={captchaWidget}
           setCaptchaRendered={setCaptchaRendered}
           customWidgetStyle={customWidgetStyle}
           debug={debug}
@@ -233,6 +253,7 @@ function useCaptchaHook({
       );
     },
     captchaStatus,
+    resetWidget,
   };
 }
 
