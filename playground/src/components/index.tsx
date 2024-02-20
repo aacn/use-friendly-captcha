@@ -53,6 +53,7 @@ const Example: FC = () => {
           <React.Fragment>
             <p className="text-xl text-black absolute top-10">solved!</p>
             <button id="submit-btn" className="p-5 bg-yellow-600">Submit</button>
+            <button className="p-5 bg-yellow-600" onClick={() => captchaManager.resetWidget()}>Reset widget</button>
           </React.Fragment>
         )}
         {captchaManager.captchaStatus.error !== null && (
