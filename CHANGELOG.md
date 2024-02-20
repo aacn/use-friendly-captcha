@@ -28,3 +28,8 @@
 
 ### v1.2.3
 - Adjust nextjs hydration for style tags
+
+### v1.3.0
+- Add function that allows to reset the current widget. This is useful if a form is submitted, 
+but the server returns an error, so the user is forced to adjust their information. As this often
+doesn't reset the page, the widget isn't automatically resetted. When submitting the form again, this would cause an error.
