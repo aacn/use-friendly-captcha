@@ -1,10 +1,15 @@
 import React, { FC, useState } from 'react';
 import submitFormToServer from './api/submitFormToServer';
-import { useCaptchaHook } from "@aacn.eu/use-friendly-captcha";
+import { useCaptchaHook } from '@aacn.eu/use-friendly-captcha/client';
 
 const Example: FC = () => {
-  const siteKey = process.env.REACT_APP_FC_DEMO_SITE_KEY!;
-  const captchaManager = useCaptchaHook({ siteKey: siteKey, showAttribution: true, startMode: "none", debug: true });
+  const siteKey = import.meta.env.REACT_APP_FC_DEMO_SITE_KEY;
+  const captchaManager = useCaptchaHook({
+    siteKey,
+    showAttribution: true,
+    startMode: 'none',
+    debug: true,
+  });
   const [submitStatus, setSubmitStatus] = useState<boolean | null>(null);
 
   async function formExampleSubmitHandler(
@@ -48,12 +53,26 @@ const Example: FC = () => {
           </label>
           <input id="input_example_2" type="text" />
         </div>
-        {captchaManager.CaptchaWidget({ className: 'bg-cyan-800' }, { icon: {color: "green", background: 'yellow'}, text: {color: "blue"}, button: {borderRadius: '50px'}})}
+        {captchaManager.CaptchaWidget(
+          { className: 'bg-cyan-800' },
+          {
+            icon: { color: 'green', background: 'yellow' },
+            text: { color: 'blue' },
+            button: { borderRadius: '50px' },
+          }
+        )}
         {captchaManager.captchaStatus.solution !== null && (
           <React.Fragment>
             <p className="text-xl text-black absolute top-10">solved!</p>
-            <button id="submit-btn" className="p-5 bg-yellow-600">Submit</button>
-            <button className="p-5 bg-yellow-600" onClick={() => captchaManager.resetWidget()}>Reset widget</button>
+            <button id="submit-btn" className="p-5 bg-yellow-600">
+              Submit
+            </button>
+            <button
+              className="p-5 bg-yellow-600"
+              onClick={() => captchaManager.resetWidget()}
+            >
+              Reset widget
+            </button>
           </React.Fragment>
         )}
         {captchaManager.captchaStatus.error !== null && (

@@ -2,5 +2,4 @@ coverage
 dist
 examples
 node_modules
-playground
 pnpm-lock.yaml

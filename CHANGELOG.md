@@ -20,6 +20,8 @@
   current TypeScript, formatting, hooks, and CI configuration.
 - Consolidate public types and endpoint helpers.
 - Document that site keys are public and API secrets must remain server-side.
+- Convert the playground to the pnpm workspace with Vite, Vitest, React 19, and
+  Tailwind CSS 4.
 
 ### v1.0.1
 

@@ -77,6 +77,11 @@ const accepted = await FCVerification({
 Verification is fail-closed: failed requests, missing responses, and
 `success: false` all return `false`.
 
+## Playground
+
+The `playground` workspace is the browser smoke-test app used during
+development. Its README documents the required public site key.
+
 ## Development
 
 ```sh
@@ -85,5 +90,5 @@ pnpm install
 pnpm check
 ```
 
-`pnpm check` formats-checks, type-checks, tests, and builds the ESM and CommonJS
-package.
+`pnpm check` formats-checks, type-checks, tests, builds the ESM and CommonJS
+package entrypoints, and verifies the playground.
