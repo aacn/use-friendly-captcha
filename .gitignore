@@ -31,4 +31,9 @@ src/Legacy
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 errorFix.txt
+
+# use pnpm exclusively
+package-lock.json
+.pnpm-store/

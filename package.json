@@ -1,101 +1,68 @@
 {
   "name": "@aacn.eu/use-friendly-captcha",
-  "description": "FriendlyCaptcha React Implementation",
+  "version": "1.3.0",
+  "description": "React hook and server verification helper for Friendly Captcha v1",
   "author": "AACN Software- und Systementwicklung GmbH",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com:aacn/use-friendly-captcha.git"
+    "url": "https://github.com/aacn/use-friendly-captcha.git"
   },
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.3.0",
-  "license": "MIT",
   "private": false,
-  "engines": {
-    "npm": "please-use-yarn",
-    "yarn": "1.x"
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
-  "browserslist": [
-    "last 3 versions",
-    "> 1%"
-  ],
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
-  "typings": "dist/index.d.ts",
   "files": [
     "dist",
+    "CHANGELOG.md",
+    "LICENSE.md",
     "README.md"
   ],
-  "exports": {
-    "import": "./dist/index.esm.js",
-    "require": "./dist/index.cjs",
-    "types": "./dist/index.d.ts"
-  },
-  "type": "module",
+  "sideEffects": false,
   "scripts": {
-    "build": "rollup -c rollup.config.js",
-    "build:watch": "rollup -c -w",
-    "playground": "cd playground && yarn start",
-    "install:frozen": "yarn install --frozen-lockfile",
-    "install:all:frozen": "./install.all.sh",
-    "install:test:frozen": "./install.test.sh",
-    "dev": "npm-run-all --parallel build-watch playground",
-    "generate": "plop",
-    "prepare": "husky install",
-    "pre-format": "lint-staged"
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean --sourcemap --target es2020 --external react --external friendly-challenge",
+    "check": "pnpm format:check && pnpm typecheck && pnpm build",
+    "format": "prettier --write src README.md CHANGELOG.md package.json tsconfig.json pnpm-workspace.yaml .prettierrc.json .github/workflows/build-and-test.yml",
+    "format:check": "prettier --check src README.md CHANGELOG.md package.json tsconfig.json pnpm-workspace.yaml .prettierrc.json .github/workflows/build-and-test.yml",
+    "prepare": "husky",
+    "prepublishOnly": "pnpm check",
+    "typecheck": "tsc --noEmit"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json}": [
-      "prettier --config .prettierrc.json --write"
-    ]
+    "*.{json,md,ts,tsx,yml}": "prettier --write"
   },
   "keywords": [
-    "friendly",
     "captcha",
-    "package",
+    "friendly-captcha",
     "react",
-    "react-hooks",
-    "react-component"
+    "react-hook"
   ],
-  "resolutions": {
-    "**/@types/node": "^18.7.13"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^22.0.2",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^14.0.0",
-    "@swc/cli": "^0.1.57",
-    "@swc/core": "^1.2.242",
-    "@swc/jest": "^0.2.23",
-    "@types/node": "^18.7.13",
-    "@types/react": "^18.0.17",
-    "@types/react-dom": "^18.0.6",
-    "autoprefixer": "^10.4.8",
-    "csstype": "^3.1.1",
-    "friendly-challenge": "^0.9.11",
-    "husky": "^8.0.1",
-    "lint-staged": "^13.0.3",
-    "npm-run-all": "^4.1.5",
-    "postcss": "^8.4.16",
-    "prettier": "^2.7.1",
-    "rollup": "^2.78.1",
-    "rollup-plugin-delete": "^2.0.0",
-    "rollup-plugin-flat-dts": "^2.0.0",
-    "rollup-plugin-node-polyfills": "^0.2.1",
-    "rollup-plugin-prettier": "^2.2.2",
-    "rollup-plugin-swc3": "^0.3.0",
-    "rollup-plugin-tsconfig-paths": "^1.3.0",
-    "rollup-plugin-typescript-paths": "^1.4.0",
-    "tailwindcss": "^3.1.8",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.9.3"
-  },
   "peerDependencies": {
     "friendly-challenge": "^0.9.11",
-    "react": ">=17.0.2",
-    "react-dom": ">=17.0.2",
-    "tailwindcss": ">=3.1.8"
-  }
+    "react": ">=17.0.2 <20"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "csstype": "3.2.3",
+    "friendly-challenge": "0.9.20",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.0",
+    "prettier": "3.9.9",
+    "react": "19.3.0",
+    "tsup": "8.5.1",
+    "typescript": "5.9.3"
+  },
+  "packageManager": "pnpm@11.17.0"
 }

@@ -1,0 +1,23 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+max_line_length = 120
+tab_width = 4
+
+[{*.ats,*.cts,*.mts,*.ts,*.tsx}]
+indent_size = 2
+max_line_length = 80
+tab_width = 2
+
+[{*.cjs,*.js,*.jsx}]
+indent_size = 2
+max_line_length = 80
+tab_width = 2
+
+[{*.json,*.yaml,*.yml}]
+indent_size = 2
