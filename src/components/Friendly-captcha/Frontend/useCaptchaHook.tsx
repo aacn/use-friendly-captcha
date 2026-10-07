@@ -1,135 +1,84 @@
-import React, {
-  Dispatch,
-  ReactElement,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import {
-  Localization,
-  localizations,
-  WidgetInstance,
-} from 'friendly-challenge';
-import type * as CSS from 'csstype';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { WidgetInstance } from 'friendly-challenge';
 
-type FriendCaptchaEndpoint = 'GLOBAL1' | 'EU1';
+import type {
+  CaptchaStatus,
+  CustomWidgetStyle,
+  FriendlyCaptchaProps,
+  FriendlyServerErrorResponse,
+  UseCaptchaResult,
+} from '../../../types';
+import { getPuzzleEndpoint } from '../../../util/endpoints';
 
-type FriendlyCaptchaProps = {
-  siteKey: string;
-  endpoint?: FriendCaptchaEndpoint;
-  language?: keyof typeof localizations | Localization;
-  startMode?: 'auto' | 'focus' | 'none';
-  showAttribution: boolean;
-  debug?: boolean;
+type FriendlyCaptchaWidgetProps = Required<FriendlyCaptchaProps> & {
+  captchaWidget: React.RefObject<WidgetInstance | null>;
+  customWidgetStyle?: CustomWidgetStyle;
+  errorHandler: (error: FriendlyServerErrorResponse) => void;
+  resetHandler: () => void;
+  solvedHandler: (solution: string) => void;
+  widgetProps: React.HTMLAttributes<HTMLDivElement>;
 };
 
-type CustomWidgetStyle = {
-  icon?: CSS.Properties;
-  button?: CSS.Properties;
-  text?: CSS.Properties;
-};
-
-type FriendlyCaptchaWidgetProps = Required<FriendlyCaptchaProps> &
-  React.HTMLAttributes<HTMLDivElement> & {
-    solvedHandler: (solution: string) => void;
-    errorHandler: (error: FriendlyServerErrorResponse) => void;
-    resetHandler: () => void;
-    captchaRendered: boolean;
-    captchaWidget: React.MutableRefObject<WidgetInstance | null>;
-    setCaptchaRendered: Dispatch<SetStateAction<boolean>>;
-    customWidgetStyle?: CustomWidgetStyle;
-  };
-
-type FriendlyServerErrorResponse = {
-  code: string;
-  description: string;
-};
-
-type CaptchaStatus = {
-  solution: string | null;
-  error: FriendlyServerErrorResponse | null;
-};
-
-function FC_PUZZLE_EP(endpoint: FriendCaptchaEndpoint): string {
-  switch (endpoint) {
-    case 'GLOBAL1':
-      return 'https://api.friendlycaptcha.com/api/v1/puzzle';
-    case 'EU1':
-      return 'https://eu-api.friendlycaptcha.eu/api/v1/puzzle';
-  }
-}
-
-function hasUppercase(str: string): boolean {
-  for (let i = 0; i < str.length; i++) {
-    if (str[i] !== str[i].toLowerCase()) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function transformToKebabCase(str: string): string {
-  return str.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
-}
-
-function cssToString(css: CSS.Properties | undefined): string {
-  if (css === undefined) {
-    return '';
-  }
-
-  let cssString = '';
-
-  Object.entries(css).forEach(([key, value]) => {
-    if (hasUppercase(key)) {
-      key = transformToKebabCase(key);
-    }
-
-    cssString = cssString + ` ${key}: ${value};`;
-  });
-  return cssString;
+function cssToString(css: React.CSSProperties | undefined): string {
+  return Object.entries(css ?? {})
+    .map(
+      ([property, value]) =>
+        ` ${property.replace(
+          /[A-Z]/g,
+          (character) => `-${character.toLowerCase()}`
+        )}: ${String(value)};`
+    )
+    .join('');
 }
 
 const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
-  // container is set in return function, where the <div> gets the container as ref attribute.
-  const container = useRef<HTMLDivElement | null>(null);
+  const container = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (props.debug) {
-      console.log(
-        `Called useEffect hook with params:\ncaptchaRendered: ${props.captchaRendered}\ncontainer: ${container.current}`
-      );
+    if (!container.current) {
+      return;
     }
-    if (!props.captchaRendered && container.current) {
-      if (props.debug) {
-        console.log('Creating new widget instance');
-      }
-      props.captchaWidget.current = new WidgetInstance(container.current, {
-        puzzleEndpoint: FC_PUZZLE_EP(props.endpoint),
-        startMode: props.startMode,
-        doneCallback: props.solvedHandler,
-        errorCallback: props.errorHandler,
-        sitekey: props.siteKey,
-        language: props.language,
-      });
 
-      if (props.debug) {
-        console.log('Set captcha to rendered: true');
-      }
-      props.setCaptchaRendered(true);
+    const widgetElement = document.createElement('div');
+    container.current.append(widgetElement);
+    props.resetHandler();
+    const widget = new WidgetInstance(widgetElement, {
+      puzzleEndpoint: getPuzzleEndpoint(props.endpoint),
+      startMode: props.startMode,
+      doneCallback: props.solvedHandler,
+      errorCallback: props.errorHandler,
+      sitekey: props.siteKey,
+      language: props.language,
+    });
+    props.captchaWidget.current = widget;
+
+    if (props.debug) {
+      console.log('Created Friendly Captcha widget instance.');
     }
 
     return () => {
-      if (props.captchaWidget.current !== null && props.captchaRendered) {
-        if (props.debug) {
-          console.log('Destroying current widget instance');
-        }
-        props.captchaWidget.current.destroy();
-        props.setCaptchaRendered(false);
-        props.resetHandler();
+      widget.destroy();
+      widgetElement.remove();
+
+      if (props.captchaWidget.current === widget) {
+        props.captchaWidget.current = null;
+      }
+
+      if (props.debug) {
+        console.log('Destroyed Friendly Captcha widget instance.');
       }
     };
-  }, []);
+  }, [
+    props.captchaWidget,
+    props.debug,
+    props.endpoint,
+    props.errorHandler,
+    props.language,
+    props.resetHandler,
+    props.siteKey,
+    props.solvedHandler,
+    props.startMode,
+  ]);
 
   return (
     <>
@@ -152,26 +101,21 @@ const FriendlyCaptcha = (props: FriendlyCaptchaWidgetProps) => {
         )}}`}</style>
       )}
       <div
+        {...props.widgetProps}
         ref={container}
         id="use-friendly-captcha-container"
-        className={props.className}
         data-sitekey={props.siteKey}
       />
     </>
   );
 };
 
-const CaptchaWidget = React.memo(FriendlyCaptcha);
+const MemoizedFriendlyCaptcha = React.memo(FriendlyCaptcha);
 
 /**
- * React hook that manages the widget and the states for the friendly captcha
- * @param siteKey defined sitekey for the particular domain
- * @param language sets the widget language (default: de)
- * @param startMode sets the widget startmode (default: auto)
- * @param endpoint captcha url that is used to create the puzzle (default: global endpoint)
- * @param showAttribution boolean to determine if the friendly captcha banner should be shown.
- * @param debug enable debug mode, which logs the hooks process, which helps with debugging.
- * @returns { CaptchaWidget, captchaStatus } CaptchaWidget the JSX widget to add in the DOM tree and captchaStatus the state of the current captcha, containing if it's solved successfull, not successfull or hasn't been checked yet
+ * Manages a Friendly Captcha v1 widget and its current solution state.
+ * @param props {FriendlyCaptchaProps} Widget configuration.
+ * @returns {UseCaptchaResult} Widget renderer, status, and reset function.
  */
 function useCaptchaHook({
   siteKey,
@@ -180,81 +124,78 @@ function useCaptchaHook({
   startMode = 'auto',
   showAttribution = true,
   debug = false,
-}: FriendlyCaptchaProps): {
-  CaptchaWidget: (
-    props: React.HTMLAttributes<HTMLDivElement>,
-    customWidgetStyle?: CustomWidgetStyle
-  ) => ReactElement;
-  captchaStatus: CaptchaStatus;
-  resetWidget: () => void;
-} {
-  const [captchaStatus, setCaptchaStatus] = useState<{
-    solution: string | null;
-    error: FriendlyServerErrorResponse | null;
-  }>({ solution: null, error: null });
-  const [captchaRendered, setCaptchaRendered] = useState<boolean>(false);
-  const captchaWidget = useRef<WidgetInstance | null>(null);
+}: FriendlyCaptchaProps): UseCaptchaResult {
+  const [captchaStatus, setCaptchaStatus] = useState<CaptchaStatus>({
+    solution: null,
+    error: null,
+  });
+  const captchaWidget = useRef<WidgetInstance>(null);
 
-  const solvedHandler = (solution: string) => {
-    if (debug) {
-      console.log(`Set captcha to solved, with solution: ${solution}`);
-    }
-    setCaptchaStatus({ solution: solution, error: null });
-  };
-
-  const errorHandler = (error: FriendlyServerErrorResponse) => {
-    console.log(error.description);
-    setCaptchaStatus({ solution: null, error: error });
-  };
-
-  const resetHandler = () => {
-    if (debug) {
-      console.log('Reseting captcha status');
-    }
-    setCaptchaStatus({ solution: null, error: null });
-  };
-
-  const resetWidget = () => {
-    if (debug) {
-      console.log('Captcha is getting resetted.');
-    }
-
-    if (captchaWidget.current !== null) {
-      captchaWidget.current?.reset();
-      setCaptchaStatus({ solution: null, error: null });
-    } else {
+  const solvedHandler = useCallback(
+    (solution: string) => {
       if (debug) {
-        console.log(
-          "Couldn't reset widget, as widget wasn't instantiated yet."
-        );
+        console.log(`Friendly Captcha solved with solution: ${solution}`);
       }
-    }
-  };
 
-  return {
-    CaptchaWidget: (widgetProps, customWidgetStyle?) => {
-      return (
-        <CaptchaWidget
-          siteKey={siteKey}
-          endpoint={endpoint}
-          language={language}
-          startMode={startMode}
-          showAttribution={showAttribution}
-          solvedHandler={solvedHandler}
-          errorHandler={errorHandler}
-          resetHandler={resetHandler}
-          captchaRendered={captchaRendered}
-          captchaWidget={captchaWidget}
-          setCaptchaRendered={setCaptchaRendered}
-          customWidgetStyle={customWidgetStyle}
-          debug={debug}
-          {...widgetProps}
-        />
-      );
+      setCaptchaStatus({ solution, error: null });
     },
-    captchaStatus,
-    resetWidget,
-  };
+    [debug]
+  );
+
+  const errorHandler = useCallback(
+    (error: FriendlyServerErrorResponse) => {
+      if (debug) {
+        console.error(error.description);
+      }
+
+      setCaptchaStatus({ solution: null, error });
+    },
+    [debug]
+  );
+
+  const resetHandler = useCallback(() => {
+    setCaptchaStatus({ solution: null, error: null });
+  }, []);
+
+  const resetWidget = useCallback(() => {
+    captchaWidget.current?.reset();
+    resetHandler();
+  }, [resetHandler]);
+
+  const CaptchaWidget = useCallback(
+    (
+      widgetProps: React.HTMLAttributes<HTMLDivElement> = {},
+      customWidgetStyle?: CustomWidgetStyle
+    ) => (
+      <MemoizedFriendlyCaptcha
+        siteKey={siteKey}
+        endpoint={endpoint}
+        language={language}
+        startMode={startMode}
+        showAttribution={showAttribution}
+        solvedHandler={solvedHandler}
+        errorHandler={errorHandler}
+        resetHandler={resetHandler}
+        captchaWidget={captchaWidget}
+        customWidgetStyle={customWidgetStyle}
+        debug={debug}
+        widgetProps={widgetProps}
+      />
+    ),
+    [
+      debug,
+      endpoint,
+      errorHandler,
+      language,
+      resetHandler,
+      showAttribution,
+      siteKey,
+      solvedHandler,
+      startMode,
+    ]
+  );
+
+  return { CaptchaWidget, captchaStatus, resetWidget };
 }
 
 export { useCaptchaHook };

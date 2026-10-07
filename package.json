@@ -33,11 +33,12 @@
   "sideEffects": false,
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean --sourcemap --target es2020 --external react --external friendly-challenge",
-    "check": "pnpm format:check && pnpm typecheck && pnpm build",
+    "check": "pnpm format:check && pnpm typecheck && pnpm test && pnpm build",
     "format": "prettier --write src README.md CHANGELOG.md package.json tsconfig.json pnpm-workspace.yaml .prettierrc.json .github/workflows/build-and-test.yml",
     "format:check": "prettier --check src README.md CHANGELOG.md package.json tsconfig.json pnpm-workspace.yaml .prettierrc.json .github/workflows/build-and-test.yml",
     "prepare": "husky",
     "prepublishOnly": "pnpm check",
+    "test": "vitest run src/index.test.tsx --environment jsdom",
     "typecheck": "tsc --noEmit"
   },
   "lint-staged": {
@@ -55,14 +56,17 @@
   },
   "devDependencies": {
     "@types/react": "19.3.0",
-    "csstype": "3.2.3",
+    "@types/react-dom": "19.3.0",
     "friendly-challenge": "0.9.20",
     "husky": "9.1.7",
+    "jsdom": "27.4.0",
     "lint-staged": "17.6.0",
     "prettier": "3.9.9",
     "react": "19.3.0",
+    "react-dom": "19.3.0",
     "tsup": "8.5.1",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "5.0.3"
   },
   "packageManager": "pnpm@11.17.0"
 }

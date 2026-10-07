@@ -2,10 +2,19 @@
 
 ### Unreleased
 
+#### Fixed
+
+- Recreate the widget when runtime configuration changes, including language.
+- Correct the Friendly Captcha v1 verification request and reject unsuccessful
+  or unavailable responses.
+- Keep React Strict Mode cleanup from removing React-owned DOM nodes.
+
 #### Changed
 
 - Replace the legacy Yarn, Rollup, and SWC toolchain with pnpm, tsup, Vitest,
   current TypeScript, formatting, hooks, and CI configuration.
+- Consolidate public types and endpoint helpers.
+- Document that site keys are public and API secrets must remain server-side.
 
 ### v1.0.1
 
