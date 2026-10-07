@@ -22,6 +22,8 @@
 - Document that site keys are public and API secrets must remain server-side.
 - Convert the playground to the pnpm workspace with Vite, Vitest, React 19, and
   Tailwind CSS 4.
+- Update the React example to React 19 and Vite, and migrate the Next.js example
+  to Next 16 App Router with a native-fetch verification route.
 
 ### v1.0.1
 
@@ -65,6 +67,5 @@
 
 ### v1.3.0
 
-- Add function that allows to reset the current widget. This is useful if a form is submitted,
-  but the server returns an error, so the user is forced to adjust their information. As this often
-  doesn't reset the page, the widget isn't automatically resetted. When submitting the form again, this would cause an error.
+- Add a function that resets the widget after a form submission without a page
+  refresh.
