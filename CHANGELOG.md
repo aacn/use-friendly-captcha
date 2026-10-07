@@ -2,6 +2,11 @@
 
 ### Unreleased
 
+#### Added
+
+- Add framework-safe `/client` and `/server` package entrypoints while keeping
+  the existing root entrypoint compatible.
+
 #### Fixed
 
 - Recreate the widget when runtime configuration changes, including language.

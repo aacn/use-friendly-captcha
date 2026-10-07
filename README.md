@@ -17,7 +17,7 @@ repository.
 ## React hook
 
 ```tsx
-import { useCaptchaHook } from '@aacn.eu/use-friendly-captcha';
+import { useCaptchaHook } from '@aacn.eu/use-friendly-captcha/client';
 
 function Form() {
   const captcha = useCaptchaHook({
@@ -57,7 +57,7 @@ a request library on consumers.
 import {
   FCVerification,
   type HttpPostFetcher,
-} from '@aacn.eu/use-friendly-captcha';
+} from '@aacn.eu/use-friendly-captcha/server';
 
 const httpPostFetcher: HttpPostFetcher = (endpoint, body, headers) =>
   fetch(endpoint, {
